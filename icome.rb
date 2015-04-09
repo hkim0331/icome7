@@ -16,7 +16,7 @@ PREFIX = {'j' => '10',
           'n' => '13',
           'o' => '14',
           'p' => '15'}
-WDAY= %w{SUN MON TUE WED THR FRI SAT}
+WDAY= %w{sun mon tue wed thr fri sat}
 
 def debug(s)
   STDERR.puts s if DEBUG
@@ -108,9 +108,9 @@ class Icome
     now = Time.now
     today, time, zone = now.to_s.split
     u_hour = WDAY[now.wday] + uhour(time).to_s
-    term = "B"
+    term = "b"
     if (4 <= now.month and now.month < 10)
-      term = "A"
+      term = "a"
     end
 
     db = "#{@icome7}/#{now.year}-#{term}-#{u_hour}"
@@ -134,10 +134,12 @@ class Icome
   # 答えをキャッシュする。
   def show
     uhours = find_uhours()
+    debug "uhours: #{uhours}"
     if uhours.count==1
       uhour = uhours[0]
     else
       # FIXME
+      raise "not implemented: if he takes two or more classes."
     end
     debug "show #{@sid} #{uhour}"
     @record = @ucome.find(@sid, uhour) if @record.nil?
