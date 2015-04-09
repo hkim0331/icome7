@@ -6,6 +6,8 @@ require 'drb'
 require 'mongo'
 
 DEBUG = true
+VERSION = "0.1.1"
+
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 
 def debug(s)
@@ -26,6 +28,7 @@ class Ucome
 
   def find(sid, uhour)
     debug "find #{sid} #{uhour}"
+    Time.now.to_s
   end
 
   def echo(s)
@@ -33,6 +36,7 @@ class Ucome
   end
 
 end
+
 #
 # main starts here.
 #

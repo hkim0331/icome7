@@ -7,6 +7,8 @@ require 'socket'
 require 'date'
 
 DEBUG = true
+VERSION = "0.1.1"
+
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
@@ -75,12 +77,12 @@ class UI
 
   def dialog(s)
     JOptionPane.showMessageDialog(
-      nil, s, 'icome', JOptionPane::INFORMATION_MESSAGE)
+      nil, "<html>#{s}</html>", 'icome', JOptionPane::INFORMATION_MESSAGE)
   end
 
   def query?(s)
     ans = JOptionPane.showConfirmDialog(
-      nil, s, 'icome', JOptionPane::YES_NO_OPTION)
+      nil, "<html>#{s}</html>", 'icome', JOptionPane::YES_NO_OPTION)
     ans == JOptionPane::YES_OPTION
   end
 end
@@ -94,6 +96,7 @@ class Icome
     @ip = IPSocket::getaddress(Socket::gethostname)
     @interval = 5
     @icome7 = File.expand_path("~/.icome7")
+    @record = nil
     Dir.mkdir(@icome7) unless Dir.exists?(@icome7)
   end
 
@@ -111,32 +114,43 @@ class Icome
     end
 
     db = "#{@icome7}/#{now.year}-#{term}-#{u_hour}"
-    if not File.exists?(db) # first_time?
-      if @ui.query?("#{u_hour} を受講しますか？")
-        @ucome.insert(@sid, u_hour)
-      end
-    else
+    unless File.exists?(db) # first_time?
+      return unless @ui.query?("#{u_hour} を受講しますか？")
+    end
+
+    @ucome.insert(@sid, u_hour)
+    if already_checked?(db, today)
+      @ui.dialog("出席記録は一回の授業にひとつで十分。")
       return
     end
-
-    if already_checked?(db, today)
-      @ui.dialog("出席記録は一回の授業でひとつで十分。")
-    else
-      @ucome.update(@sid, today, u_hour)
-      log(db, today)
-      @ui.dialog("出席を記録しました。<br>"+
-                 "学生番号:#{@sid}<br>"+
-                 "端末番号:#{@ip.split(/\./)[3]}")
-    end
+    @ucome.update(@sid, today, u_hour)
+    log(db, today)
+    @record = nil
+    @ui.dialog("出席を記録しました。<br>"+
+               "学生番号:#{@sid}<br>"+
+               "端末番号:#{@ip.split(/\./)[3]}")
   end
 
+  # 答えをキャッシュする。
   def show
-    debug "show"
-    @ui.dialog(@ucome.find(@sid, @uhour))
+    uhours = find_uhours()
+    if uhours.count==1
+      uhour = uhours[0]
+    else
+      # FIXME
+    end
+    debug "show #{@sid} #{uhour}"
+    @record = @ucome.find(@sid, uhour) if @record.nil?
+    @ui.dialog(@record)
   end
 
   def quit
     java.lang.System.exit(0) unless ENV['UCOME']
+  end
+
+  def find_uhours
+    Dir.entries(@icome7).find_all{|x| x =~ /^\d/}.
+      collect{|x| x.split(/-/)[2]}
   end
 
   def first_time?(u_hour)
@@ -144,9 +158,11 @@ class Icome
   end
 
   def already_checked?(db, today)
+    debug "db: #{db}, today: #{today}"
     return false unless File.exists?(db)
     r = %r{#{today}}
     File.foreach(db) do |line|
+      debug "line: #{line}"
       return true if line =~ r
     end
     false
