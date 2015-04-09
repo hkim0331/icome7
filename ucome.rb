@@ -14,7 +14,15 @@ end
 
 class Ucome
   def initialize
+  end
 
+  def insert(sid, uhour)
+  end
+
+  def update(sid, date, uhour)
+  end
+
+  def find(sid, uhour)
   end
 
   def echo(s)
