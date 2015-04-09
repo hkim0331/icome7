@@ -2,20 +2,26 @@
 # jgem install bson_ext errored.
 # so ruby.
 
-require 'drb'
+gem "mongo","1.12.1"
 require 'mongo'
+require 'drb'
 
 DEBUG = true
 VERSION = "0.1.1"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
-
+HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
+PORT = (ENV['UCOME_PORT'] || '27017')
+DB   = (ENV['UCOME_DB'] || 'ucome')
 def debug(s)
   STDERR.puts s if DEBUG
 end
 
 class Ucome
   def initialize
+    @conn  = Mongo::Connection.new(HOST, PORT)
+    @db    = @conn[DB]
+    @users = @db['users']
   end
 
   def insert(sid, uhour)
