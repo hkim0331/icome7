@@ -17,10 +17,9 @@ PREFIX = {'j' => '10',
 WDAY= %w{SUN MON TUE WED THR FRI SAT}
 
 def debug(s)
-  puts s if DEBUG
+  STDERR.puts s if DEBUG
 end
 
-# hkim or hkimura does not has PREFIX
 def uid2sid(uid)
   PREFIX[uid[0]] + uid[1,6]
 rescue
@@ -76,12 +75,12 @@ class UI
 
   def dialog(s)
     JOptionPane.showMessageDialog(
-      nil, s, JOptionPane::INFORMATION_MESSAGE)
+      nil, s, 'icome', JOptionPane::INFORMATION_MESSAGE)
   end
 
   def query?(s)
     ans = JOptionPane.showConfirmDialog(
-      nil, s, '', JOptionPane::YES_NO_OPTION)
+      nil, s, 'icome', JOptionPane::YES_NO_OPTION)
     ans == JOptionPane::YES_OPTION
   end
 end
@@ -125,10 +124,9 @@ class Icome
     else
       @ucome.update(@sid, today, u_hour)
       log(db, today)
-      @ui.dialog(html('black',
-                      "出席を記録しました。<br>"+
-                      "学生番号:#{@sid}<br>"+
-                      "端末番号:#{@ip.split(/\./)[3]}"))
+      @ui.dialog("出席を記録しました。<br>"+
+                 "学生番号:#{@sid}<br>"+
+                 "端末番号:#{@ip.split(/\./)[3]}")
     end
   end
 
@@ -146,9 +144,10 @@ class Icome
   end
 
   def already_checked?(db, today)
+    return false unless File.exists?(db)
     r = %r{#{today}}
     File.foreach(db) do |line|
-      return if line =~ r
+      return true if line =~ r
     end
     false
   end

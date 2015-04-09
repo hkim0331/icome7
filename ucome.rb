@@ -9,7 +9,7 @@ DEBUG = true
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 
 def debug(s)
-  puts s if DEBUG
+  STDERR.puts s if DEBUG
 end
 
 class Ucome
@@ -17,12 +17,15 @@ class Ucome
   end
 
   def insert(sid, uhour)
+    debug "insert #{sid} #{uhour}"
   end
 
   def update(sid, date, uhour)
+    debug "update #{sid} #{date} #{uhour}"
   end
 
   def find(sid, uhour)
+    debug "find #{sid} #{uhour}"
   end
 
   def echo(s)
