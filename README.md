@@ -6,21 +6,28 @@ rewrite icome6 with backend mongodb.
 ## require
 
 ````
-gem install mongo bson_ext
+gem install mongo -v 1.12.1
+gem install bson_ext
 ````
 
 ## usage
 
+mongodb:
+
+````
+mongo$ ./start-mongodh.sh
+````
+
 server:
 
 ````
-$ UCOME='druby://150.69.90.80:9007' ./ucome.rb
+orange$ UCOME='druby://150.69.90.80:9007' ./ucome.rb
 ````
 
 client:
 
 ````
-$ UCOME='druby://150.69.90.80:9007' ./icome.rb
+isc$ UCOME='druby://150.69.90.80:9007' ./icome.rb
 ````
 
 ## author
