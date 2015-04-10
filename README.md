@@ -9,7 +9,19 @@ rewrite icome6 with backend mongodb.
 gem install mongo bson_ext
 ````
 
-##
+## usage
+
+server:
+
+````
+$ UCOME='druby://150.69.90.80:9007' ./ucome.rb
+````
+
+client:
+
+````
+$ UCOME='druby://150.69.90.80:9007' ./icome.rb
+````
 
 ## author
 
