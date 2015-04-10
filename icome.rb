@@ -7,7 +7,7 @@ require 'socket'
 require 'date'
 
 DEBUG = true
-VERSION = "0.2"
+VERSION = "0.3"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
@@ -118,11 +118,13 @@ class Icome
       return unless @ui.query?("#{u_hour} を受講しますか？")
     end
 
-    @ucome.insert(@sid, u_hour)
     if already_checked?(db, today)
       @ui.dialog("出席記録は一回の授業にひとつで十分。")
       return
+    else
+      @ucome.insert(@sid, u_hour)
     end
+
     @ucome.update(@sid, today, u_hour)
     log(db, today)
     @record = nil
@@ -143,7 +145,7 @@ class Icome
     end
     debug "show #{@sid} #{uhour}"
     @record = @ucome.find(@sid, uhour) if @record.nil?
-    @ui.dialog(@record)
+    @ui.dialog(@record.join('<br>'))
   end
 
   def quit

@@ -7,11 +7,11 @@ require 'mongo'
 require 'drb'
 
 DEBUG = true
-VERSION = "0.2"
+VERSION = "0.3"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
-HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
-PORT = (ENV['UCOME_PORT'] || '27017')
+HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
+PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
 
 def debug(s)
