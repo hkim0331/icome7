@@ -108,13 +108,11 @@ class Icome
     now = Time.now
     today, time, zone = now.to_s.split
     u_hour = WDAY[now.wday] + uhour(time).to_s
-    term = "b"
-    if (4 <= now.month and now.month < 10)
-      term = "a"
-    end
+    term = this_term()
+    db = "#{@icome7}/#{term}-#{u_hour}"
 
-    db = "#{@icome7}/#{now.year}-#{term}-#{u_hour}"
-    unless File.exists?(db) # first_time?
+    # first time?
+    unless File.exists?(db) 
       return unless @ui.query?("#{u_hour} を受講しますか？")
     end
 
@@ -122,15 +120,24 @@ class Icome
       @ui.dialog("出席記録は一回の授業にひとつで十分。")
       return
     else
-      @ucome.insert(@sid, u_hour)
+      @ucome.insert(@sid, u_hour, term)
     end
 
-    @ucome.update(@sid, today, u_hour)
+    @ucome.update(@sid, today, u_hour, term)
     log(db, today)
     @record = nil
     @ui.dialog("出席を記録しました。<br>"+
                "学生番号:#{@sid}<br>"+
                "端末番号:#{@ip.split(/\./)[3]}")
+  end
+
+  def this_term()
+    now = Time.now
+    t = "b"
+    if (4 <= now.month and now.month < 10)
+      t = "a"
+    end
+    "#{t}#{now.year}"
   end
 
   # 答えをキャッシュする。
@@ -144,7 +151,7 @@ class Icome
       raise "not implemented: if he takes two or more classes."
     end
     debug "show #{@sid} #{uhour}"
-    @record = @ucome.find(@sid, uhour) if @record.nil?
+    @record = @ucome.find(@sid, uhour, this_term()) if @record.nil?
     @ui.dialog(@record.join('<br>'))
   end
 
@@ -154,7 +161,7 @@ class Icome
 
   def find_uhours
     Dir.entries(@icome7).find_all{|x| x =~ /^\d/}.
-      collect{|x| x.split(/-/)[2]}
+      collect{|x| x.split(/-/)[1]}
   end
 
   def first_time?(u_hour)
