@@ -1,6 +1,12 @@
 #!/usr/bin/env ruby
 # jgem install bson_ext errored.
 # so ruby.
+#
+# format {
+# sid: '12345678'
+# uhour: 'wed3'
+# atttends: [ '2014-04-12' ]
+# }
 
 gem "mongo","1.12.1"
 require 'mongo'
@@ -51,7 +57,9 @@ end
 # main starts here.
 #
 
-ucome = Ucome.new
-DRb.start_service(UCOME_URI, ucome)
-debug DRb.uri
-DRb.thread.join
+if __FILE__ == $0
+  ucome = Ucome.new
+  DRb.start_service(UCOME_URI, ucome)
+  debug DRb.uri
+  DRb.thread.join
+end

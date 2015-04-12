@@ -112,7 +112,7 @@ class Icome
     db = "#{@icome7}/#{term}-#{u_hour}"
 
     # first time?
-    unless File.exists?(db) 
+    unless File.exists?(db)
       return unless @ui.query?("#{u_hour} を受講しますか？")
     end
 
@@ -193,20 +193,21 @@ end
 #
 # main starts here
 #
+if __FILE__ == $0
+  DRb.start_service
+  ucome = DRbObject.new(nil, UCOME_URI)
+  icome = Icome.new(ucome)
+  icome.setup_ui
 
-DRb.start_service
-ucome = DRbObject.new(nil, UCOME_URI)
-icome = Icome.new(ucome)
-icome.setup_ui
+  #debug ucome.echo("hello, ucome.")
+  #debug icome.echo("hello, ucome via icome.")
 
-#debug ucome.echo("hello, ucome.")
-#debug icome.echo("hello, ucome via icome.")
-
-Thread.new do
-  while true do
-    sleep icome.interval
-#    debug icome.echo("hello, ucome via icome.")
+  Thread.new do
+    while true do
+      sleep icome.interval
+      #    debug icome.echo("hello, ucome via icome.")
+    end
   end
-end
 
-DRb.thread.join
+  DRb.thread.join
+end
