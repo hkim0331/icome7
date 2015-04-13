@@ -8,4 +8,5 @@ ucome:
 	update-rc.d ucome defaults
 
 clean:
-	${RM} *~ *.bak
+	${RM} *~ *.bak .#*
+
