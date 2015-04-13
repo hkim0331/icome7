@@ -8,6 +8,9 @@ require 'date'
 
 DEBUG = false
 
+VERSION = "0.6.1"
+UPDATE  = "2015-04-13"
+
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
@@ -15,7 +18,9 @@ PREFIX = {'j' => '10',
           'n' => '13',
           'o' => '14',
           'p' => '15'}
-WDAY= %w{sun mon tue wed thr fri sat}
+WDAY = %w{sun mon tue wed thr fri sat}
+
+POLLING_INTERVAL = 3
 
 def debug(s)
   STDERR.puts "debug: " + s if DEBUG
@@ -210,9 +215,10 @@ icome.setup_ui
 #debug ucome.echo("hello, ucome.")
 #debug icome.echo("hello, ucome via icome.")
 
+# polling admin commands.
 Thread.new do
   while true do
-    sleep icome.interval
+    sleep POLLING_INTERVAL
     #    debug icome.echo("hello, ucome via icome.")
   end
 end

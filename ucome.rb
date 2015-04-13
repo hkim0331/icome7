@@ -14,6 +14,9 @@ require 'drb'
 
 DEBUG = false
 
+VERSION = "0.6.1"
+UPDATE  = "2015-04-13"
+
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
 PORT = (ENV['UCOME_PORT'] || '27017')
