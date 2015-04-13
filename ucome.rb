@@ -12,7 +12,7 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-DEBUG = false
+DEBUG = true
 
 VERSION = "0.6.1"
 UPDATE  = "2015-04-13"
@@ -30,6 +30,7 @@ class Ucome
   def initialize
     @conn = Mongo::Connection.new(HOST, PORT)
     @db   = @conn[DB]
+    @commands = Commands.new
   end
 
   def insert(sid, uhour, term)
@@ -49,7 +50,6 @@ class Ucome
     @db[term].find_one({sid: sid, uhour: uhour})["attends"]
   end
 
-  #
   def quit
     debug "will quit"
     exit(0)
@@ -59,6 +59,43 @@ class Ucome
     s
   end
 
+  def push(cmd)
+    @commands.push(cmd)
+  end
+
+  def list
+    @commands.list
+  end
+
+  def delete(n)
+    @commands.delete(n)
+  end
+end
+
+class Commands
+  def initialize
+    @commands = []
+  end
+
+  def push(cmd)
+    @commands.push(cmd)
+  end
+
+  def get(n)
+    @commands[n]
+  end
+
+  def list
+    ret = []
+    @commands.each_with_index do |cmd, index|
+      ret.push "#{index}: #{cmd}"
+    end
+    ret
+  end
+
+  def delete(n)
+    @commands.delete_at(n)
+  end
 end
 
 #
