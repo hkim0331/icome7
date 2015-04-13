@@ -42,9 +42,15 @@ class Ucome
                       :multi => false);
   end
 
-   def find(sid, uhour, term)
+  def find(sid, uhour, term)
     debug "find #{sid} #{uhour} #{term}"
     @db[term].find_one({sid: sid, uhour: uhour})["attends"]
+  end
+
+  #
+  def quit
+    debug "will quit"
+    exit(0)
   end
 
   def echo(s)
