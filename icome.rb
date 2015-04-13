@@ -7,7 +7,7 @@ require 'socket'
 require 'date'
 
 DEBUG = true
-VERSION = "0.3"
+VERSION = "0.4"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
