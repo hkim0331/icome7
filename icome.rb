@@ -7,7 +7,7 @@ require 'socket'
 require 'date'
 
 DEBUG = true
-VERSION = "0.4"
+VERSION = "0.4.1"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
@@ -19,7 +19,7 @@ PREFIX = {'j' => '10',
 WDAY= %w{sun mon tue wed thr fri sat}
 
 def debug(s)
-  STDERR.puts s if DEBUG
+  STDERR.puts "debug: " + s if DEBUG
 end
 
 def uid2sid(uid)

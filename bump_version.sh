@@ -9,7 +9,7 @@ VERSION=$1
 FILES="icome.rb ucome.rb"
 
 # must use gsed?
-SED="gsed"
+SED="sed"
 for i in ${FILES}; do
     ${SED} -i.bak "/^\s*VERSION\s*=/ c\
 VERSION = \"${VERSION}\"" $i
