@@ -14,9 +14,9 @@ else
     SED="sed"
 fi
 
-for i in ${FILES}; do
-    ${SED} -i.bak "/^\s*VERSION\s*=/ c\
-VERSION = \"${VERSION}\"" $i
-done
+#for i in ${FILES}; do
+#    ${SED} -i.bak "/^\s*VERSION\s*=/ c\
+#VERSION = \"${VERSION}\"" $i
+#done
 
 echo ${VERSION} > VERSION
