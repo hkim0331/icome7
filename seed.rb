@@ -14,6 +14,7 @@ def uhour(time)
 end
 
 who = Hash.new
+debug "read seed.txt."
 File.foreach("seed.txt") do |line|
   next if line =~ /^#/
   line = line.strip
@@ -21,11 +22,10 @@ File.foreach("seed.txt") do |line|
   next if id.nil?
   who[sid] = uhour(time)
 end
+debug "who.count: #{who.count}"
 
 ucome = Ucome.new
-#puts who.count
 who.each do |sid, entry|
-  #puts "#{sid} wed#{entry}"
   ucome.insert(sid, "wed#{entry}", "a2015")
   ucome.update(sid, '2015-04-08', "wed#{entry}", "a2015")
 end

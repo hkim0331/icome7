@@ -13,7 +13,7 @@ require 'mongo'
 require 'drb'
 
 DEBUG = true
-VERSION = "0.4"
+VERSION = "0.4.1"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
@@ -21,7 +21,7 @@ PORT = (ENV['UCOME_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
 
 def debug(s)
-  STDERR.puts s if DEBUG
+  STDERR.puts "debug: "+s if DEBUG
 end
 
 class Ucome
@@ -56,8 +56,9 @@ end
 #
 # main starts here.
 #
-
-ucome = Ucome.new
-DRb.start_service(UCOME_URI, ucome)
-debug DRb.uri
-DRb.thread.join
+if __FILE__==$0
+  ucome = Ucome.new
+  DRb.start_service(UCOME_URI, ucome)
+  debug DRb.uri
+  DRb.thread.join
+end
