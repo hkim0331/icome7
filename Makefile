@@ -4,7 +4,8 @@ isc:
 
 ucome:
 	install -m 0755 ucome.service /etc/init.d/ucome
-	install -m 0755 ucome.rb ucome-backup.sh /opt/icome7/bin
+	install -m 0755 ucome.rb /opt/icome7/bin
+	install -m 0755 ucome-backup.sh /etc/cron.weekly/ucome-backup
 	update-rc.d ucome defaults
 
 clean:
