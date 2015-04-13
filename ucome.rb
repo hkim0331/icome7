@@ -12,7 +12,7 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-DEBUG = true
+DEBUG = false
 VERSION = "0.5"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')

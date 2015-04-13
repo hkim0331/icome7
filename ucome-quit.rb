@@ -1,10 +1,9 @@
-#!/usr/bin/env jruby
+#!/usr/bin/env ruby
 # coding: utf-8
-# swing. so jruby.
+# does not work. 2015-04-13
 
 require 'drb'
 
-VERSION = "0.4.1"
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 DRb.start_service
 ucome = DRbObject.new(nil, UCOME_URI)
