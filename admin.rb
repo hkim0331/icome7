@@ -43,7 +43,7 @@ Thread.new do
       ucome.push(cmd)
     when /download (\w+) (\w+)/
       ucome.push(cmd)
-    when /display (\w+)/
+    when /display/
       ucome.push(cmd)
     when /list/
       puts ucome.list

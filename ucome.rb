@@ -12,8 +12,7 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-DEBUG = true
-
+DEBUG = false
 VERSION = "0.6.1"
 UPDATE  = "2015-04-13"
 
@@ -59,6 +58,8 @@ class Ucome
     s
   end
 
+  # admin interface
+
   def push(cmd)
     @commands.push(cmd)
   end
@@ -69,6 +70,11 @@ class Ucome
 
   def delete(n)
     @commands.delete(n)
+  end
+
+  def fetch(n)
+    debug "#{__method__} #{n}"
+    @commands.get(n)
   end
 end
 

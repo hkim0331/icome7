@@ -7,9 +7,9 @@ require 'socket'
 require 'date'
 
 DEBUG = false
-
 VERSION = "0.6.1"
 UPDATE  = "2015-04-13"
+POLLING_INTERVAL = 3
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
@@ -20,7 +20,6 @@ PREFIX = {'j' => '10',
           'p' => '15'}
 WDAY = %w{sun mon tue wed thr fri sat}
 
-POLLING_INTERVAL = 3
 
 def debug(s)
   STDERR.puts "debug: " + s if DEBUG
@@ -108,6 +107,10 @@ class Icome
     @ui = UI.new(self)
   end
 
+  def dialog(s)
+    @ui.dialog(s)
+  end
+
   # attend を打った時間をチェックする。
   def attend
     now = Time.now
@@ -120,7 +123,7 @@ class Icome
     # コマンド引数にスイッチを取るようにするか？
     unless DEBUG
       unless u_hour =~ /(wed1)|(wed2)/
-        @ui.dialog("授業時間じゃありません。")
+        self.dialog("授業時間じゃありません。")
         return
       end
     end
@@ -131,7 +134,7 @@ class Icome
     end
 
     if already_checked?(db, today)
-      @ui.dialog("出席記録は一回の授業にひとつで十分。")
+      self.dialog("出席記録は一回の授業にひとつで十分。")
       return
     else
       @ucome.insert(@sid, u_hour, term)
@@ -140,7 +143,7 @@ class Icome
     @ucome.update(@sid, today, u_hour, term)
     log(db, today)
     @record = nil
-    @ui.dialog("出席を記録しました。<br>"+
+    self.dialog("出席を記録しました。<br>"+
                "学生番号:#{@sid}<br>"+
                "端末番号:#{@ip.split(/\./)[3]}")
   end
@@ -165,7 +168,7 @@ class Icome
     end
     debug "#{__method__}: #{@sid} #{uhour}"
     @record = @ucome.find(@sid, uhour, this_term()) if @record.nil?
-    @ui.dialog(@record.sort.join('<br>'))
+    self.dialog(@record.sort.join('<br>'))
   end
 
   def quit
@@ -216,10 +219,24 @@ icome.setup_ui
 #debug icome.echo("hello, ucome via icome.")
 
 # polling admin commands.
+next_cmd = 1
 Thread.new do
   while true do
+    cmd = ucome.fetch(next_cmd)
+    next if cmd.nil?
     sleep POLLING_INTERVAL
-    #    debug icome.echo("hello, ucome via icome.")
+    debug "cmd: #{cmd}"
+    case cmd
+    when /^upload (\w+) (\w+)/
+      puts "not yet implemented."
+    when /^download (\w+) (\w+)/
+      puts "not yet implemented."
+    when /^display (.*)$/
+      icome.dialog($1)
+    else
+      puts "error: #{cmd}"
+    end
+    next_cmd += 1
   end
 end
 
