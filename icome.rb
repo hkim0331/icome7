@@ -7,7 +7,7 @@ require 'socket'
 require 'date'
 
 DEBUG = true
-VERSION = "0.3"
+VERSION = "0.4"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
@@ -104,17 +104,25 @@ class Icome
     @ui = UI.new(self)
   end
 
+  # attend を打った時間をチェックする。
   def attend
     now = Time.now
     today, time, zone = now.to_s.split
     u_hour = WDAY[now.wday] + uhour(time).to_s
-    term = "b"
-    if (4 <= now.month and now.month < 10)
-      term = "a"
+    term = this_term()
+    db = "#{@icome7}/#{term}-#{u_hour}"
+
+    # FIXME, a2015 special.
+    # コマンド引数にスイッチを取るようにするか？
+    unless DEBUG
+      unless u_hour =~ /(wed1)|(wed2)/
+        @ui.dialog("授業時間じゃありません。")
+        return
+      end
     end
 
-    db = "#{@icome7}/#{now.year}-#{term}-#{u_hour}"
-    unless File.exists?(db) # first_time?
+    # first time?
+    unless File.exists?(db)
       return unless @ui.query?("#{u_hour} を受講しますか？")
     end
 
@@ -122,10 +130,10 @@ class Icome
       @ui.dialog("出席記録は一回の授業にひとつで十分。")
       return
     else
-      @ucome.insert(@sid, u_hour)
+      @ucome.insert(@sid, u_hour, term)
     end
 
-    @ucome.update(@sid, today, u_hour)
+    @ucome.update(@sid, today, u_hour, term)
     log(db, today)
     @record = nil
     @ui.dialog("出席を記録しました。<br>"+
@@ -133,19 +141,27 @@ class Icome
                "端末番号:#{@ip.split(/\./)[3]}")
   end
 
-  # 答えをキャッシュする。
+  def this_term()
+    now = Time.now
+    t = "b"
+    if (4 <= now.month and now.month < 10)
+      t = "a"
+    end
+    "#{t}#{now.year}"
+  end
+
+  # 答えを @record にキャッシュする。
   def show
     uhours = find_uhours()
-    debug "uhours: #{uhours}"
-    if uhours.count==1
+    return if uhours.empty?
+    if uhours.count == 1
       uhour = uhours[0]
     else
-      # FIXME
       raise "not implemented: if he takes two or more classes."
     end
-    debug "show #{@sid} #{uhour}"
-    @record = @ucome.find(@sid, uhour) if @record.nil?
-    @ui.dialog(@record.join('<br>'))
+    debug "#{__method__}: #{@sid} #{uhour}"
+    @record = @ucome.find(@sid, uhour, this_term()) if @record.nil?
+    @ui.dialog(@record.sort.join('<br>'))
   end
 
   def quit
@@ -153,8 +169,9 @@ class Icome
   end
 
   def find_uhours
-    Dir.entries(@icome7).find_all{|x| x =~ /^\d/}.
-      collect{|x| x.split(/-/)[2]}
+    Dir.entries(@icome7).
+      find_all{|x| x =~ /^[ab]/}.
+      collect{|x| x.split(/-/)[1]}
   end
 
   def first_time?(u_hour)
@@ -186,7 +203,6 @@ end
 #
 # main starts here
 #
-
 DRb.start_service
 ucome = DRbObject.new(nil, UCOME_URI)
 icome = Icome.new(ucome)
@@ -198,7 +214,7 @@ icome.setup_ui
 Thread.new do
   while true do
     sleep icome.interval
-#    debug icome.echo("hello, ucome via icome.")
+    #    debug icome.echo("hello, ucome via icome.")
   end
 end
 
