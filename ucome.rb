@@ -13,7 +13,7 @@ require 'mongo'
 require 'drb'
 
 DEBUG = true
-VERSION = "0.4.1"
+VERSION = "0.5"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
@@ -42,9 +42,15 @@ class Ucome
                       :multi => false);
   end
 
-   def find(sid, uhour, term)
+  def find(sid, uhour, term)
     debug "find #{sid} #{uhour} #{term}"
     @db[term].find_one({sid: sid, uhour: uhour})["attends"]
+  end
+
+  #
+  def quit
+    debug "will quit"
+    exit(0)
   end
 
   def echo(s)

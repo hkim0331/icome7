@@ -1,0 +1,30 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          ucome
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: icome version 7 server
+# Description:       provide mongodb interface via druby connection.
+### END INIT INFO
+#
+# Author: Hiroshi Kimura <hiroshi.kimura.0331@gmail.com>
+
+usage() {
+    echo "Usage: $0 {start|stop}"
+}
+
+case "$1" in
+    start)
+        UCOME_URI='druby://150.69.90.80:9007' /opt/icome7/ucome.rb
+        ;;
+    stop)
+        UCOME_URI='druby://150.69.90.80:9007' /opt/icome7/ucome-quit.rb
+        ;;
+    *)
+        usage
+        ;;
+esac
+
+:

@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# coding: utf-8
+# ucome を一旦止め、seed.rb単独で動作させること。
 
 require './ucome.rb'
 
@@ -12,7 +14,7 @@ def uhour(time)
 end
 
 who = Hash.new
-puts "read seed.txt."
+debug "read seed.txt."
 File.foreach("seed.txt") do |line|
   next if line =~ /^#/
   line = line.strip
@@ -20,11 +22,10 @@ File.foreach("seed.txt") do |line|
   next if id.nil?
   who[sid] = uhour(time)
 end
-puts "who.count: #{who.count}"
+debug "who.count: #{who.count}"
 
 ucome = Ucome.new
 who.each do |sid, entry|
-  puts "insert: #{sid} wed#{entry}"
   ucome.insert(sid, "wed#{entry}", "a2015")
   ucome.update(sid, '2015-04-08', "wed#{entry}", "a2015")
 end

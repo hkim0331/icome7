@@ -1,5 +1,6 @@
 ## FIXME
 
+* ucome-quit.rb
 * インストールスクリプト
 * icome.rb を終了させない。
 * watch-ss
