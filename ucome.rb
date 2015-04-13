@@ -57,9 +57,7 @@ end
 # main starts here.
 #
 
-if __FILE__ == $0
-  ucome = Ucome.new
-  DRb.start_service(UCOME_URI, ucome)
-  debug DRb.uri
-  DRb.thread.join
-end
+ucome = Ucome.new
+DRb.start_service(UCOME_URI, ucome)
+debug DRb.uri
+DRb.thread.join

@@ -104,12 +104,22 @@ class Icome
     @ui = UI.new(self)
   end
 
+  # attend を打った時間をチェックする。
   def attend
     now = Time.now
     today, time, zone = now.to_s.split
     u_hour = WDAY[now.wday] + uhour(time).to_s
     term = this_term()
     db = "#{@icome7}/#{term}-#{u_hour}"
+
+    # FIXME, a2015 special.
+    # コマンド引数にスイッチを取るようにするか？
+    unless DEBUG
+      unless u_hour =~ /(wed1)|(wed2)/
+        @ui.dialog("授業時間じゃありません。")
+        return
+      end
+    end
 
     # first time?
     unless File.exists?(db)
@@ -140,19 +150,18 @@ class Icome
     "#{t}#{now.year}"
   end
 
-  # 答えをキャッシュする。
+  # 答えを @record にキャッシュする。
   def show
     uhours = find_uhours()
-    debug "uhours: #{uhours}"
-    if uhours.count==1
+    return if uhours.empty?
+    if uhours.count == 1
       uhour = uhours[0]
     else
-      # FIXME
       raise "not implemented: if he takes two or more classes."
     end
-    debug "show #{@sid} #{uhour}"
+    debug "#{__method__}: #{@sid} #{uhour}"
     @record = @ucome.find(@sid, uhour, this_term()) if @record.nil?
-    @ui.dialog(@record.join('<br>'))
+    @ui.dialog(@record.sort.join('<br>'))
   end
 
   def quit
@@ -160,7 +169,8 @@ class Icome
   end
 
   def find_uhours
-    Dir.entries(@icome7).find_all{|x| x =~ /^\d/}.
+    Dir.entries(@icome7).
+      find_all{|x| x =~ /^[ab]/}.
       collect{|x| x.split(/-/)[1]}
   end
 
@@ -193,21 +203,19 @@ end
 #
 # main starts here
 #
-if __FILE__ == $0
-  DRb.start_service
-  ucome = DRbObject.new(nil, UCOME_URI)
-  icome = Icome.new(ucome)
-  icome.setup_ui
+DRb.start_service
+ucome = DRbObject.new(nil, UCOME_URI)
+icome = Icome.new(ucome)
+icome.setup_ui
 
-  #debug ucome.echo("hello, ucome.")
-  #debug icome.echo("hello, ucome via icome.")
+#debug ucome.echo("hello, ucome.")
+#debug icome.echo("hello, ucome via icome.")
 
-  Thread.new do
-    while true do
-      sleep icome.interval
-      #    debug icome.echo("hello, ucome via icome.")
-    end
+Thread.new do
+  while true do
+    sleep icome.interval
+    #    debug icome.echo("hello, ucome via icome.")
   end
-
-  DRb.thread.join
 end
+
+DRb.thread.join
