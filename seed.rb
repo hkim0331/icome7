@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# coding: utf-8
+# ucome を一旦止め、seed.rb単独で動作させること。
 
 require './ucome.rb'
 
@@ -12,7 +14,7 @@ def uhour(time)
 end
 
 who = Hash.new
-File.foreach("data/icome.txt") do |line|
+File.foreach("seed.txt") do |line|
   next if line =~ /^#/
   line = line.strip
   id,sid,date,time = line.split
