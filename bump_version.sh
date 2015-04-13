@@ -8,12 +8,12 @@ fi
 VERSION=$1
 FILES="icome.rb ucome.rb"
 
-# must use gsed?
 if [ -e /Users ]; then
     SED="gsed"
 else
     SED="sed"
 fi
+
 for i in ${FILES}; do
     ${SED} -i.bak "/^\s*VERSION\s*=/ c\
 VERSION = \"${VERSION}\"" $i
