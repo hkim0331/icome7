@@ -1,13 +1,12 @@
 #!/usr/bin/env jruby
 # coding: utf-8
-# swing. so jruby.
+# use swing. so jruby.
 
 require 'drb'
 require 'socket'
 require 'date'
 
-DEBUG = true
-VERSION = "0.5.2"
+DEBUG = false
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
