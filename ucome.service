@@ -17,10 +17,10 @@ usage() {
 
 case "$1" in
     start)
-        UCOME_URI='druby://150.69.90.80:9007' /opt/icome7/ucome.rb
+        UCOME='druby://150.69.90.80:9007' /opt/icome7/bin/ucome.rb &
         ;;
     stop)
-        UCOME_URI='druby://150.69.90.80:9007' /opt/icome7/ucome-quit.rb
+        kill `ps ax | grep [u]come.rb | awk '{print $1}'`
         ;;
     *)
         usage
