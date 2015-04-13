@@ -21,7 +21,7 @@ PORT = (ENV['UCOME_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
 
 def debug(s)
-  STDERR.puts s if DEBUG
+  STDERR.puts "debug: "+s if DEBUG
 end
 
 class Ucome
@@ -56,8 +56,9 @@ end
 #
 # main starts here.
 #
-
-ucome = Ucome.new
-DRb.start_service(UCOME_URI, ucome)
-debug DRb.uri
-DRb.thread.join
+if __FILE__==$0
+  ucome = Ucome.new
+  DRb.start_service(UCOME_URI, ucome)
+  debug DRb.uri
+  DRb.thread.join
+end

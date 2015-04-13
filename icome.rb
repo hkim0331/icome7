@@ -19,7 +19,7 @@ PREFIX = {'j' => '10',
 WDAY= %w{sun mon tue wed thr fri sat}
 
 def debug(s)
-  STDERR.puts s if DEBUG
+  STDERR.puts "debug: " + s if DEBUG
 end
 
 def uid2sid(uid)
