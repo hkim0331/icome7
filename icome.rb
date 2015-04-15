@@ -6,11 +6,9 @@ require 'drb'
 require 'socket'
 require 'date'
 
-DEBUG = false
+DEBUG = true
 VERSION = "0.6.1"
 UPDATE  = "2015-04-13"
-POLLING_INTERVAL = 3
-
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
@@ -19,7 +17,7 @@ PREFIX = {'j' => '10',
           'o' => '14',
           'p' => '15'}
 WDAY = %w{sun mon tue wed thr fri sat}
-
+POLLING_INTERVAL = 3
 
 def debug(s)
   STDERR.puts "debug: " + s if DEBUG
@@ -38,6 +36,13 @@ def uhour(time)
   return 4 if "14:40:00" <= time and time <= "16:10:00"
   return 5 if "16:20:00" <= time and time <= "17:50:00"
   return 0
+end
+
+def exists_icome?()
+  IO.popen("ps ax | grep [i]come") do |p|
+    lines = p.readlines
+    return !lines.empty?
+  end
 end
 
 class UI
@@ -210,6 +215,10 @@ end
 #
 # main starts here
 #
+if exists_icome?()
+  debug "another icome process exists."
+  return
+end
 DRb.start_service
 ucome = DRbObject.new(nil, UCOME_URI)
 icome = Icome.new(ucome)
