@@ -63,6 +63,12 @@ class UI
     end
     panel.add(button)
 
+    button = JButton.new('提出物')
+    button.add_action_listener do |e|
+      @icome.status
+    end
+    panel.add(button)
+
     # quit button in development only.
     unless ENV['UCOME']
       button = JButton.new('Quit')
@@ -210,8 +216,9 @@ class Icome
     @ucome.upload(@sid, File.basename(local), File.open(it).read)
   end
 
-  def show_upload()
-
+  def status()
+    msg = @ucome.status(@sid)
+    @ui.dialog(msg.join("<p>"))
   end
 
   def download(remote)
