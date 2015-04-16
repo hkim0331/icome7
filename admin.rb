@@ -23,6 +23,7 @@ usage:
   download remote
   exec command
   list
+  (re)start
   upload local
   quit
 EOF
@@ -51,6 +52,8 @@ Thread.new do
       ucome.push(cmd)
     when /exec/
       ucome.push(cmd)
+    when /(re)?start/
+      ucome.refresh
     when /quit/
       exit(0)
     else

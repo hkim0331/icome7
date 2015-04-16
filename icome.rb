@@ -227,8 +227,12 @@ class Icome
 
   def upload(local)
     it = File.join(ENV['HOME'], local)
-    debug "#{__method__} #{it}, #{File.basename(local)}, #{File.open(it).read}"
-    @ucome.upload(@sid, File.basename(local), File.open(it).read)
+    if File.exists?(it)
+      @ucome.upload(@sid, File.basename(local), File.open(it).read)
+    else
+      # FIXME 日本語メッセージだと表示されない。
+      @ui.dialog("did not find #{it}.")
+    end
   end
 
   def status()

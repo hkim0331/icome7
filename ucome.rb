@@ -103,6 +103,12 @@ class Ucome
     end
   end
 
+  # FIXME: method name
+  def refresh
+    @commands = Commands.new
+    self.push("restart")
+  end
+
 end
 
 class Commands
