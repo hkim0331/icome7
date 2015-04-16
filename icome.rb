@@ -264,7 +264,7 @@ icome.setup_ui
 #debug icome.echo("hello, ucome via icome.")
 
 # polling admin commands.
-next_cmd = 1
+next_cmd = 0
 Thread.new do
   while true do
     cmd = ucome.fetch(next_cmd)
@@ -282,6 +282,8 @@ Thread.new do
       icome.download($1)
     when /^exec/
       icome.exec(cmd)
+    when /^reset/
+      next_cmd = 0
     else
       puts "error: #{cmd}"
     end
