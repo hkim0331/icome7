@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-# jgem install bson_ext errored.
-# so ruby.
+# jgem install bson_ext errored. so ruby.
 #
 # format {
 # sid: '12345678'
@@ -16,15 +15,15 @@ require 'mongo'
 require 'drb'
 
 DEBUG = (ENV['DEBUG'] || false)
+UPLOAD = if File.directory?("/srv/icome7/upload")
+    "/srv/icome7/upload"
+  else
+    "./upload"
+  end
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
 PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
-UPLOAD = if File.directory?("/srv/icome/upload")
-  "/srv/icome/upload"
-  else
-  "./upload"
-  end
 
 def debug(s)
   STDERR.puts "debug: "+s if DEBUG
@@ -102,6 +101,12 @@ class Ucome
     else
       []
     end
+  end
+
+  # FIXME: method name
+  def refresh
+    @commands = Commands.new
+    self.push("restart")
   end
 
 end

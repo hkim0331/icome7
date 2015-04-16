@@ -6,8 +6,8 @@ require 'drb'
 
 DEBUG = true
 
-VERSION = "0.6.1"
-UPDATE  = "2015-04-13"
+VERSION = "0.8.3"
+UPDATE  = "2015-04-16"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 
@@ -23,6 +23,7 @@ usage:
   download remote
   exec command
   list
+  (re)start
   upload local
   quit
 EOF
@@ -51,6 +52,8 @@ Thread.new do
       ucome.push(cmd)
     when /exec/
       ucome.push(cmd)
+    when /(re)?start/
+      ucome.refresh
     when /quit/
       exit(0)
     else

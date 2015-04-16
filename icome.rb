@@ -18,7 +18,7 @@ PREFIX = {'j' => '10',
           'o' => '14',
           'p' => '15'}
 WDAY = %w{sun mon tue wed thr fri sat}
-POLLING_INTERVAL = 3
+POLLING_INTERVAL = 5
 
 def debug(s)
   STDERR.puts "debug: " + s if DEBUG
@@ -93,6 +93,16 @@ class UI
       nil, "<html>#{s}</html>", 'icome', JOptionPane::YES_NO_OPTION)
     ans == JOptionPane::YES_OPTION
   end
+
+  def option_dialog(ss, query)
+    ans = JOptionPane.showOptionDialog(
+      nil,"<html>#{query}</html>","icome",
+      JOptionPane::YES_NO_OPTION,
+      JOptionPane::QUESTION_MESSAGE,
+      nil,
+      ss,
+      ss[0])
+  end
 end
 
 class Icome
@@ -164,9 +174,9 @@ class Icome
     if uhours.count == 1
       uhour = uhours[0]
     else
-      @ui.dialog("複数の授業を取っているようです。")
-      return
-      #raise "not implemented: if he takes two or more classes."
+      ret = @ui.option_dialog(uhours,"複数のクラスを受講しているようです。")
+      return if ret < 0
+      uhour = uhours[ret]
     end
     record = @ucome.find(@sid, uhour, this_term())
     if record
@@ -217,8 +227,12 @@ class Icome
 
   def upload(local)
     it = File.join(ENV['HOME'], local)
-    debug "#{__method__} #{it}, #{File.basename(local)}, #{File.open(it).read}"
-    @ucome.upload(@sid, File.basename(local), File.open(it).read)
+    if File.exists?(it)
+      @ucome.upload(@sid, File.basename(local), File.open(it).read)
+    else
+      # FIXME 日本語メッセージだと表示されない。
+      @ui.dialog("did not find #{it}.")
+    end
   end
 
   def status()
@@ -250,7 +264,7 @@ icome.setup_ui
 #debug icome.echo("hello, ucome via icome.")
 
 # polling admin commands.
-next_cmd = 1
+next_cmd = 0
 Thread.new do
   while true do
     cmd = ucome.fetch(next_cmd)
@@ -268,6 +282,8 @@ Thread.new do
       icome.download($1)
     when /^exec/
       icome.exec(cmd)
+    when /^reset/
+      next_cmd = 0
     else
       puts "error: #{cmd}"
     end
