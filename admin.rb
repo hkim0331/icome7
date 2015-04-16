@@ -2,7 +2,6 @@
 # coding: utf-8
 # UI なしでも動作できたほうがいい。
 
-
 require 'drb'
 
 DEBUG = true
