@@ -12,7 +12,7 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-VERSION = "0.7.1"
+VERSION = "0.8"
 UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
@@ -20,8 +20,8 @@ UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
 PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
-UPLOAD = if File.directory?("/srv/icome7/upload")
-  "/srv/icome7/upload"
+UPLOAD = if File.directory?("/srv/icome/upload")
+  "/srv/icome/upload"
   else
   "./upload"
   end
@@ -96,7 +96,12 @@ class Ucome
   end
 
   def status(sid)
-    Dir.entries(File.join(UPLOAD,sid)).delete_if{|x| x=~/^\./}
+    dir = File.join(UPLOAD,sid)
+    if File.directory?(dir)
+      Dir.entries(dir).delete_if{|x| x=~/^\./}
+    else
+      ""
+    end
   end
 
 end
