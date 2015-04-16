@@ -12,7 +12,7 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-VERSION = "0.7.1"
+VERSION = "0.8"
 UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
