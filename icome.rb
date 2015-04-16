@@ -224,6 +224,8 @@ class Icome
   def status()
     msg = @ucome.status(@sid)
     @ui.dialog(msg.join("<p>"))
+  rescue
+    puts "msg: #{msg}"
   end
 
   def download(remote)
