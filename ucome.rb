@@ -20,8 +20,8 @@ UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
 PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
-UPLOAD = if File.directory?("/srv/icome7/upload")
-  "/srv/icome7/upload"
+UPLOAD = if File.directory?("/srv/icome/upload")
+  "/srv/icome/upload"
   else
   "./upload"
   end
