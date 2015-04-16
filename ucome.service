@@ -11,13 +11,20 @@
 #
 # Author: Hiroshi Kimura <hiroshi.kimura.0331@gmail.com>
 
+VERSION=
+USER="hkim"
+CMD="/opt/icome7/bin/ucome.rb"
+
+export UCOME='druby://150.69.90.80:9007'
+
 usage() {
     echo "Usage: $0 {start|stop}"
 }
 
 case "$1" in
     start)
-        UCOME='druby://150.69.90.80:9007' /opt/icome7/bin/ucome.rb &
+        start-stop-daemon --start --chuid $USER --background \
+            --exec ${CMD} || true
         ;;
     stop)
         kill `ps ax | grep [u]come.rb | awk '{print $1}'`

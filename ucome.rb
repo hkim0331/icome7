@@ -96,7 +96,12 @@ class Ucome
   end
 
   def status(sid)
-    Dir.entries(File.join(UPLOAD,sid)).delete_if{|x| x=~/^\./}
+    dir = File.join(UPLOAD,sid)
+    if File.directory?(dir)
+      Dir.entries(dir).delete_if{|x| x=~/^\./}
+    else
+      ""
+    end
   end
 
 end
