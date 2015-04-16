@@ -100,7 +100,7 @@ class Ucome
     if File.directory?(dir)
       Dir.entries(dir).delete_if{|x| x=~/^\./}
     else
-      ""
+      []
     end
   end
 

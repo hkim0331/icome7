@@ -11,7 +11,6 @@
 #
 # Author: Hiroshi Kimura <hiroshi.kimura.0331@gmail.com>
 
-VERSION=
 USER="hkim"
 CMD="/opt/icome7/bin/ucome.rb"
 
