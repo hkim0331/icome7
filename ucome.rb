@@ -29,6 +29,7 @@ class Ucome
   def initialize
     @conn = Mongo::Connection.new(HOST, PORT)
     @db   = @conn[DB]
+    @commands = Commands.new
   end
 
   def insert(sid, uhour, term)
@@ -62,6 +63,50 @@ class Ucome
     s
   end
 
+  # admin interface
+
+  def push(cmd)
+    @commands.push(cmd)
+  end
+
+  def list
+    @commands.list
+  end
+
+  def delete(n)
+    @commands.delete(n)
+  end
+
+  def fetch(n)
+    debug "#{__method__} #{n}"
+    @commands.get(n)
+  end
+end
+
+class Commands
+  def initialize
+    @commands = []
+  end
+
+  def push(cmd)
+    @commands.push(cmd)
+  end
+
+  def get(n)
+    @commands[n]
+  end
+
+  def list
+    ret = []
+    @commands.each_with_index do |cmd, index|
+      ret.push "#{index}: #{cmd}"
+    end
+    ret
+  end
+
+  def delete(n)
+    @commands.delete_at(n)
+  end
 end
 
 #

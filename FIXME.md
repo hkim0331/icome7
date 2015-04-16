@@ -18,9 +18,8 @@
 ## DONE
 
 * インストールスクリプト
+
 * singleton チェックは icome.rb のラッパー、つまり、icome.sh で実施。
 * icome.rb を終了させない。=> nohup で。
 * watch-ss => 別フォルダ、別プロジェクトで。
-
-
 

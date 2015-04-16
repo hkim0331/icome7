@@ -115,7 +115,7 @@ class Icome
 
     unless DEBUG
       unless u_hour =~ /(wed1)|(wed2)/
-        @ui.dialog("授業時間じゃありません。")
+        self.dialog("授業時間じゃありません。")
         return
       end
     end
@@ -157,7 +157,6 @@ class Icome
     else
       raise "not implemented: if he takes two or more classes."
     end
-
     record = @ucome.find(@sid, uhour, this_term())
     if record
       @ui.dialog(record.sort.join('<br>'))
@@ -214,10 +213,24 @@ icome.setup_ui
 #debug icome.echo("hello, ucome via icome.")
 
 # polling admin commands.
+next_cmd = 1
 Thread.new do
   while true do
+    cmd = ucome.fetch(next_cmd)
+    next if cmd.nil?
     sleep POLLING_INTERVAL
-    #    debug icome.echo("hello, ucome via icome.")
+    debug "cmd: #{cmd}"
+    case cmd
+    when /^upload (\w+) (\w+)/
+      puts "not yet implemented."
+    when /^download (\w+) (\w+)/
+      puts "not yet implemented."
+    when /^display (.*)$/
+      icome.dialog($1)
+    else
+      puts "error: #{cmd}"
+    end
+    next_cmd += 1
   end
 end
 
