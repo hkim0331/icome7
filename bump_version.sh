@@ -6,6 +6,7 @@ if [ ! $# = 1 ]; then
     exit
 fi
 VERSION=$1
+TODAY=`date +%F`
 FILES="icome.rb ucome.rb"
 
 if [ -e /Users ]; then
@@ -14,9 +15,12 @@ else
     SED="sed"
 fi
 
-#for i in ${FILES}; do
-#    ${SED} -i.bak "/^\s*VERSION\s*=/ c\
-#VERSION = \"${VERSION}\"" $i
-#done
+for i in ${FILES}; do
+    ${SED} -i.bak \
+           -e "/^ *VERSION *=/c\
+VERSION = \"${VERSION}\"" \
+           -e "/^ *UPDATE *=/c\
+UPDATE  = \"${TODAY}\"" $i
+done
 
 echo ${VERSION} > VERSION

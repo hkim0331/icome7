@@ -6,8 +6,10 @@ require 'drb'
 require 'socket'
 require 'date'
 
-DEBUG = false
+VERSION = "0.7"
+UPDATE  = "2015-04-16"
 
+DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
@@ -15,7 +17,8 @@ PREFIX = {'j' => '10',
           'n' => '13',
           'o' => '14',
           'p' => '15'}
-WDAY= %w{sun mon tue wed thr fri sat}
+WDAY = %w{sun mon tue wed thr fri sat}
+POLLING_INTERVAL = 3
 
 def debug(s)
   STDERR.puts "debug: " + s if DEBUG
@@ -60,7 +63,7 @@ class UI
     end
     panel.add(button)
 
-    # only show quit button in development.
+    # quit button in development only.
     unless ENV['UCOME']
       button = JButton.new('Quit')
       button.add_action_listener do |e|
@@ -103,7 +106,6 @@ class Icome
     @ui = UI.new(self)
   end
 
-  # attend を打った時間をチェックする。
   def attend
     now = Time.now
     today, time, zone = now.to_s.split
@@ -111,33 +113,30 @@ class Icome
     term = this_term()
     db = "#{@icome7}/#{term}-#{u_hour}"
 
-    # FIXME, a2015 special.
-    # コマンド引数にスイッチを取るようにするか？
     unless DEBUG
       unless u_hour =~ /(wed1)|(wed2)/
-        @ui.dialog("授業時間じゃありません。")
+        self.dialog("授業時間じゃありません。")
         return
       end
     end
 
-    # first time?
-    unless File.exists?(db)
-      return unless @ui.query?("#{u_hour} を受講しますか？")
-    end
-
-    if already_checked?(db, today)
-      @ui.dialog("出席記録は一回の授業にひとつで十分。")
-      return
+    records = @ucome.find(@sid, u_hour, term)
+    debug "records: #{records}, #{@sid}, #{u_hour}, #{term}"
+    if records
+      if records.include?(today)
+        @ui.dialog("出席記録は一回の授業にひとつで十分。")
+        return
+      end
+      @ucome.update(@sid, today, u_hour, term)
+      @ui.dialog("出席を記録しました。<br>"+
+                 "学生番号:#{@sid}<br>"+
+                 "端末番号:#{@ip.split(/\./)[3]}")
     else
-      @ucome.insert(@sid, u_hour, term)
+      if @ui.query?("#{u_hour} を受講しますか？")
+        @ucome.insert(@sid, u_hour, term)
+        memo(db, today)
+      end
     end
-
-    @ucome.update(@sid, today, u_hour, term)
-    log(db, today)
-    @record = nil
-    @ui.dialog("出席を記録しました。<br>"+
-               "学生番号:#{@sid}<br>"+
-               "端末番号:#{@ip.split(/\./)[3]}")
   end
 
   def this_term()
@@ -149,8 +148,8 @@ class Icome
     "#{t}#{now.year}"
   end
 
-  # 答えを @record にキャッシュする。
   def show
+    #FIXME
     uhours = find_uhours()
     return if uhours.empty?
     if uhours.count == 1
@@ -158,9 +157,12 @@ class Icome
     else
       raise "not implemented: if he takes two or more classes."
     end
-    debug "#{__method__}: #{@sid} #{uhour}"
-    @record = @ucome.find(@sid, uhour, this_term()) if @record.nil?
-    @ui.dialog(@record.sort.join('<br>'))
+    record = @ucome.find(@sid, uhour, this_term())
+    if record
+      @ui.dialog(record.sort.join('<br>'))
+    else
+      @ui.dialog("記録がありません。")
+    end
   end
 
   def quit
@@ -177,8 +179,8 @@ class Icome
     not File.exist?(File.join(@icome7,uhour))
   end
 
-  def already_checked?(db, today)
-    debug "db: #{db}, today: #{today}"
+  def checked?(db, today)
+    debug "#{__method__} db: #{db}, today: #{today}"
     return false unless File.exists?(db)
     r = %r{#{today}}
     File.foreach(db) do |line|
@@ -188,14 +190,37 @@ class Icome
     false
   end
 
-  def log(db,today)
+  def memo(db,today)
     File.open(db,"a") do |fp|
       fp.puts today
     end
   end
 
+  def dialog(s)
+    @ui.dialog(s)
+  end
+
   def echo(s)
     @ucome.echo(s)
+  end
+
+  def upload(local)
+    it = File.join(ENV['HOME'], local)
+    debug "#{__method__} #{it}, #{File.basename(local)}, #{File.open(it).read}"
+    @ucome.upload(@sid, File.basename(local), File.open(it).read)
+  end
+
+  def show_upload()
+
+  end
+
+  def download(remote)
+    debug "#{__method__} #{remote}"
+  end
+
+  # jruby では無理。
+  def exec(command)
+    puts "無理。"
   end
 end
 
@@ -210,10 +235,29 @@ icome.setup_ui
 #debug ucome.echo("hello, ucome.")
 #debug icome.echo("hello, ucome via icome.")
 
+# polling admin commands.
+next_cmd = 1
 Thread.new do
   while true do
-    sleep icome.interval
-    #    debug icome.echo("hello, ucome via icome.")
+    cmd = ucome.fetch(next_cmd)
+    if cmd.nil?
+      sleep POLLING_INTERVAL
+      next
+    end
+    debug "cmd: #{cmd}"
+    case cmd
+    when /^display (.*)$/
+      icome.dialog($1)
+    when /^upload\s+(\S+)/
+      icome.upload($1)
+    when /^download\s+(\S+)/
+      icome.download($1)
+    when /^exec/
+      icome.exec(cmd)
+    else
+      puts "error: #{cmd}"
+    end
+    next_cmd += 1
   end
 end
 
