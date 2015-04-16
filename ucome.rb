@@ -12,13 +12,13 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-VERSION = "0.7"
+VERSION = "0.7.1"
 UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
-HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
-PORT = (ENV['UCOME_PORT'] || '27017')
+HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
+PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
 UPLOAD = if File.directory?("/srv/icome7/upload")
   "/srv/icome7/upload"
@@ -31,6 +31,7 @@ def debug(s)
 end
 
 class Ucome
+
   def initialize
     @conn = Mongo::Connection.new(HOST, PORT)
     @db   = @conn[DB]
@@ -69,7 +70,6 @@ class Ucome
   end
 
   # admin interface
-
   def push(cmd)
     @commands.push(cmd)
   end
@@ -83,24 +83,26 @@ class Ucome
   end
 
   def fetch(n)
-    debug "#{__method__} #{n}"
     @commands.get(n)
   end
 
   def upload(sid, name, contents)
-    debug "upload: #{sid}, #{name},#{contents},#{UPLOAD}"
     dir = File.join(UPLOAD,sid)
     Dir.mkdir(dir) unless File.directory?(dir)
-    to =  File.join(dir,Time.now.strftime("%F_#{name}"))
-    debug "upload #{name} to #{to}"
+    to = File.join(dir,Time.now.strftime("%F_#{name}"))
     File.open(to, "w") do |f|
       f.puts contents
     end
   end
 
+  def status(sid)
+    Dir.entries(File.join(UPLOAD,sid)).delete_if{|x| x=~/^\./}
+  end
+
 end
 
 class Commands
+
   def initialize
     @commands = []
   end

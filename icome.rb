@@ -6,7 +6,7 @@ require 'drb'
 require 'socket'
 require 'date'
 
-VERSION = "0.7"
+VERSION = "0.7.1"
 UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
@@ -60,6 +60,12 @@ class UI
     button = JButton.new('記録')
     button.add_action_listener do |e|
       @icome.show
+    end
+    panel.add(button)
+
+    button = JButton.new('提出物')
+    button.add_action_listener do |e|
+      @icome.status
     end
     panel.add(button)
 
@@ -210,8 +216,9 @@ class Icome
     @ucome.upload(@sid, File.basename(local), File.open(it).read)
   end
 
-  def show_upload()
-
+  def status()
+    msg = @ucome.status(@sid)
+    @ui.dialog(msg.join("<p>"))
   end
 
   def download(remote)
