@@ -7,7 +7,7 @@ ucome:
 	install -m 0755 ucome.rb /opt/icome7/bin
 	install -m 0755 ucome-backup.sh /etc/cron.weekly/ucome-backup
 	update-rc.d ucome defaults
-	mkdir -p /srv/icome/upload
+	mkdir -p /srv/icome7/upload
 
 clean:
 	${RM} *~ .#* *.bak nohup.out
