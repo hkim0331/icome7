@@ -1,6 +1,8 @@
 ## FIXME
 
-* delete はバグの元だろう。
+* ucome にはキャッシュさせない。
+* キャッシュするなら icome 側。
+* キャッシュしない icome を作る。どうせ、ダイアログでブロックするさ。
 * version を書き込むとそこでマージが失敗するようになった。いつから？
 * 新規登録と時間外出席を区別する。
 * icome-admin
@@ -16,7 +18,8 @@
 ## DONE
 
 * インストールスクリプト
-* watch-ss
-* ucome-quit.rb
-* icome.rb を終了させない。
+
+* singleton チェックは icome.rb のラッパー、つまり、icome.sh で実施。
+* icome.rb を終了させない。=> nohup で。
+* watch-ss => 別フォルダ、別プロジェクトで。
 

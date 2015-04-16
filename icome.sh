@@ -1,15 +1,23 @@
 #!/bin/sh
+# debug
+#ICOME=./icome.rb
+ICOME=/home/t/hkimura/bin/icome.rb
+SS=/edu/bin/watch-ss
 
 # singleton check
-if [ `ps ax | grep icome7.rb` ]; then
-    echo 1
-else
-    echo 2
+ps ax | egrep '[i]come.rb' >/dev/null
+if [ "$?" -eq 0 ]; then
+    echo "icome はすでに起動しています。"
+    exit
 fi
-exit(0)
 
-echo "icome は起動に 5 秒くらいかかります。"
-UCOME='druby://150.69.90.80:9007' nohup /home/t/hkimura/bin/icome7.rb 2>/dev/null &
-if [ -e /edu/bin/watch-ss ]; then
-    nohup /edu/bin/watch-ss 2>/dev/null &
+# launch icome
+if [ -e ${ICOME} ]; then
+    echo "icome の起動には 5 秒くらいかかります。"
+    UCOME='druby://150.69.90.80:9007' nohup ${ICOME} 2>/dev/null &
+fi
+
+# additional scripts
+if [ -e ${SS} ]; then
+    nohup ${SS} 2>/dev/null &
 fi

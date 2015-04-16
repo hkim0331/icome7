@@ -12,10 +12,10 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-DEBUG = false
 VERSION = "0.6.1"
 UPDATE  = "2015-04-13"
 
+DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
 PORT = (ENV['UCOME_PORT'] || '27017')
@@ -33,20 +33,25 @@ class Ucome
   end
 
   def insert(sid, uhour, term)
-    debug "insert #{sid} #{uhour} #{term}"
+    debug "#{__method__} #{sid} #{uhour} #{term}"
     @db[term].save({sid: sid, uhour: uhour, attends: []})
   end
 
   def update(sid, date, uhour, term)
-    debug "update #{sid} #{date} #{uhour} #{term}"
+    debug "#{__method__} #{sid} #{date} #{uhour} #{term}"
     @db[term].update({sid: sid, uhour: uhour},
                       {"$addToSet" => {attends: date}},
                       :multi => false);
   end
 
   def find(sid, uhour, term)
-    debug "find #{sid} #{uhour} #{term}"
-    @db[term].find_one({sid: sid, uhour: uhour})["attends"]
+    debug "#{__method__} #{sid} #{uhour} #{term}"
+    ret = @db[term].find_one({sid: sid, uhour: uhour})
+    if ret.nil?
+      nil
+    else
+      ret["attends"]
+    end
   end
 
   def quit
