@@ -18,7 +18,7 @@ PREFIX = {'j' => '10',
           'o' => '14',
           'p' => '15'}
 WDAY = %w{sun mon tue wed thr fri sat}
-POLLING_INTERVAL = 3
+POLLING_INTERVAL = 5
 
 def debug(s)
   STDERR.puts "debug: " + s if DEBUG
@@ -93,6 +93,16 @@ class UI
       nil, "<html>#{s}</html>", 'icome', JOptionPane::YES_NO_OPTION)
     ans == JOptionPane::YES_OPTION
   end
+
+  def option_dialog(ss, query)
+    ans = JOptionPane.showOptionDialog(
+      nil,"<html>#{query}</html>","icome",
+      JOptionPane::YES_NO_OPTION,
+      JOptionPane::QUESTION_MESSAGE,
+      nil,
+      ss,
+      ss[0])
+  end
 end
 
 class Icome
@@ -164,9 +174,9 @@ class Icome
     if uhours.count == 1
       uhour = uhours[0]
     else
-      @ui.dialog("複数の授業を取っているようです。")
-      return
-      #raise "not implemented: if he takes two or more classes."
+      ret = @ui.option_dialog(uhours,"複数のクラスを受講しているようです。")
+      return if ret < 0
+      uhour = uhours[ret]
     end
     record = @ucome.find(@sid, uhour, this_term())
     if record

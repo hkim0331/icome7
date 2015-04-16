@@ -15,10 +15,10 @@ require 'mongo'
 require 'drb'
 
 DEBUG = (ENV['DEBUG'] || false)
-UPLOAD = if DEBUG
-  "./upload"
+UPLOAD = if File.directory?("/srv/icome7/upload")
+    "/srv/icome7/upload"
   else
-  "/srv/icome7/upload"
+    "./upload"
   end
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
