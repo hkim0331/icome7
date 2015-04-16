@@ -12,4 +12,7 @@ ucome:
 clean:
 	${RM} *~ .#* *.bak nohup.out
 
+syncisc:
+	rsync --exclude=upload \
+		-av . hkimura@remote-t.isc.kyutech.ac.jp:icome7/
 

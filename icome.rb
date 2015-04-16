@@ -157,17 +157,22 @@ class Icome
   def show
     #FIXME
     uhours = find_uhours()
-    return if uhours.empty?
+    if uhours.empty?
+      @ui.dialog("記録がありません。")
+      return
+    end
     if uhours.count == 1
       uhour = uhours[0]
     else
-      raise "not implemented: if he takes two or more classes."
+      @ui.dialog("複数の授業を取っているようです。")
+      return
+      #raise "not implemented: if he takes two or more classes."
     end
     record = @ucome.find(@sid, uhour, this_term())
     if record
       @ui.dialog(record.sort.join('<br>'))
     else
-      @ui.dialog("記録がありません。")
+      @ui.dialog("記録がありません。変ですね。")
     end
   end
 
