@@ -138,7 +138,7 @@ class Icome
       @ui.dialog("出席記録は一回の授業にひとつで十分。")
       return
     else
-      @ucome.insert(@sid, u_hour, term)
+      @ucome.insert(@sid, u_hour, term) unless @ucome.find(@sid, u_hour, term)
     end
 
     @ucome.update(@sid, today, u_hour, term)
