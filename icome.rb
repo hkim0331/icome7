@@ -6,7 +6,7 @@ require 'drb'
 require 'socket'
 require 'date'
 
-VERSION = "0.8"
+VERSION = "0.8.1"
 UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
