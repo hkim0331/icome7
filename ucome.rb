@@ -12,14 +12,19 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-VERSION = "0.6.1"
-UPDATE  = "2015-04-13"
+VERSION = "0.7"
+UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 HOST = (ENV['UCOME_HOST'] || '127.0.0.1')
 PORT = (ENV['UCOME_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
+UPLOAD = if File.directory?("/srv/icome7/upload")
+  "/srv/icome7/upload"
+  else
+  "./upload"
+  end
 
 def debug(s)
   STDERR.puts "debug: "+s if DEBUG
@@ -81,6 +86,18 @@ class Ucome
     debug "#{__method__} #{n}"
     @commands.get(n)
   end
+
+  def upload(sid, name, contents)
+    debug "upload: #{sid}, #{name},#{contents},#{UPLOAD}"
+    dir = File.join(UPLOAD,sid)
+    Dir.mkdir(dir) unless File.directory?(dir)
+    to =  File.join(dir,Time.now.strftime("%F_#{name}"))
+    debug "upload #{name} to #{to}"
+    File.open(to, "w") do |f|
+      f.puts contents
+    end
+  end
+
 end
 
 class Commands
@@ -107,11 +124,13 @@ class Commands
   def delete(n)
     @commands.delete_at(n)
   end
+
 end
 
 #
 # main starts here.
 #
+
 if __FILE__==$0
   ucome = Ucome.new
   DRb.start_service(UCOME_URI, ucome)

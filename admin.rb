@@ -20,9 +20,10 @@ def usage
 usage:
   delete n
   display message
-  download remote local
+  download remote
+  exec command
   list
-  upload local remote
+  upload local
   quit
 EOF
 end
@@ -38,16 +39,18 @@ Thread.new do
   puts "type 'quit' to quit"
    while (print "> "; cmd = STDIN.gets)
     case cmd
-    when /upload (\w+) (\w+)/
-      ucome.push(cmd)
-    when /download (\w+) (\w+)/
-      ucome.push(cmd)
-    when /display/
-      ucome.push(cmd)
     when /list/
       puts ucome.list
-    when /delete (\d+)/
+    when /display/
+      ucome.push(cmd)
+    when /delete\s+(\d+)/
       ucome.delete($1.to_i)
+    when /upload\s+.+/
+      ucome.push(cmd)
+    when /download\s+.+/
+      ucome.push(cmd)
+    when /exec/
+      ucome.push(cmd)
     when /quit/
       exit(0)
     else
