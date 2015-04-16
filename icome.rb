@@ -2,12 +2,12 @@
 # coding: utf-8
 # use swing. so jruby.
 
+VERSION = "0.8.2"
+UPDATE  = "2015-04-16"
+
 require 'drb'
 require 'socket'
 require 'date'
-
-VERSION = "0.8.2"
-UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
@@ -157,17 +157,22 @@ class Icome
   def show
     #FIXME
     uhours = find_uhours()
-    return if uhours.empty?
+    if uhours.empty?
+      @ui.dialog("記録がありません。")
+      return
+    end
     if uhours.count == 1
       uhour = uhours[0]
     else
-      raise "not implemented: if he takes two or more classes."
+      @ui.dialog("複数の授業を取っているようです。")
+      return
+      #raise "not implemented: if he takes two or more classes."
     end
     record = @ucome.find(@sid, uhour, this_term())
     if record
       @ui.dialog(record.sort.join('<br>'))
     else
-      @ui.dialog("記録がありません。")
+      @ui.dialog("記録がありません。変ですね。")
     end
   end
 
@@ -219,6 +224,8 @@ class Icome
   def status()
     msg = @ucome.status(@sid)
     @ui.dialog(msg.join("<p>"))
+  rescue
+    puts "msg: #{msg}"
   end
 
   def download(remote)

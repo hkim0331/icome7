@@ -8,12 +8,12 @@
 # atttends: [ '2014-04-12' ]
 # }
 
+VERSION = "0.8.2"
+UPDATE  = "2015-04-16"
+
 gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
-
-VERSION = "0.8.2"
-UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
@@ -96,11 +96,11 @@ class Ucome
   end
 
   def status(sid)
-    dir = File.join(UPLOAD,sid)
+    dir = File.join(UPLOAD, sid)
     if File.directory?(dir)
       Dir.entries(dir).delete_if{|x| x=~/^\./}
     else
-      ""
+      []
     end
   end
 

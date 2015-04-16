@@ -7,7 +7,7 @@ if [ ! $# = 1 ]; then
 fi
 VERSION=$1
 TODAY=`date +%F`
-FILES="icome.rb ucome.rb"
+FILES="icome.rb ucome.rb ucome.service"
 
 if [ -e /Users ]; then
     SED="gsed"
