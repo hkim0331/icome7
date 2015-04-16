@@ -6,8 +6,8 @@ require 'drb'
 
 DEBUG = true
 
-VERSION = "0.6.1"
-UPDATE  = "2015-04-13"
+VERSION = "0.8.3"
+UPDATE  = "2015-04-16"
 
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 
