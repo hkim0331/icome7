@@ -6,8 +6,8 @@ require 'drb'
 require 'socket'
 require 'date'
 
-VERSION = "0.6.1"
-UPDATE  = "2015-04-13"
+VERSION = "0.7"
+UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
@@ -111,7 +111,7 @@ class Icome
     today, time, zone = now.to_s.split
     u_hour = WDAY[now.wday] + uhour(time).to_s
     term = this_term()
-    db = "#{@icome7}/{term}-{u_hour}"
+    db = "#{@icome7}/#{term}-#{u_hour}"
 
     unless DEBUG
       unless u_hour =~ /(wed1)|(wed2)/
@@ -196,8 +196,31 @@ class Icome
     end
   end
 
+  def dialog(s)
+    @ui.dialog(s)
+  end
+
   def echo(s)
     @ucome.echo(s)
+  end
+
+  def upload(local)
+    it = File.join(ENV['HOME'], local)
+    debug "#{__method__} #{it}, #{File.basename(local)}, #{File.open(it).read}"
+    @ucome.upload(@sid, File.basename(local), File.open(it).read)
+  end
+
+  def show_upload()
+
+  end
+
+  def download(remote)
+    debug "#{__method__} #{remote}"
+  end
+
+  # jruby では無理。
+  def exec(command)
+    puts "無理。"
   end
 end
 
@@ -217,16 +240,20 @@ next_cmd = 1
 Thread.new do
   while true do
     cmd = ucome.fetch(next_cmd)
-    next if cmd.nil?
-    sleep POLLING_INTERVAL
+    if cmd.nil?
+      sleep POLLING_INTERVAL
+      next
+    end
     debug "cmd: #{cmd}"
     case cmd
-    when /^upload (\w+) (\w+)/
-      puts "not yet implemented."
-    when /^download (\w+) (\w+)/
-      puts "not yet implemented."
     when /^display (.*)$/
       icome.dialog($1)
+    when /^upload\s+(\S+)/
+      icome.upload($1)
+    when /^download\s+(\S+)/
+      icome.download($1)
+    when /^exec/
+      icome.exec(cmd)
     else
       puts "error: #{cmd}"
     end
