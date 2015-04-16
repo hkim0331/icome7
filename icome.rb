@@ -2,12 +2,12 @@
 # coding: utf-8
 # use swing. so jruby.
 
+VERSION = "0.8.2"
+UPDATE  = "2015-04-16"
+
 require 'drb'
 require 'socket'
 require 'date'
-
-VERSION = "0.8.1"
-UPDATE  = "2015-04-16"
 
 DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
