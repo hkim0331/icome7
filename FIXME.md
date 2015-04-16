@@ -1,10 +1,9 @@
 ## FIXME
 
+* ucome にはキャッシュさせない。
+* キャッシュするなら icome 側。
+* キャッシュしない icome を作る。どうせ、ダイアログでブロックするさ。
 * version を書き込むとそこでマージが失敗するようになった。いつから？
-* ucome-quit.rb
-* インストールスクリプト
-* icome.rb を終了させない。
-* watch-ss
 * 新規登録と時間外出席を区別する。
 * icome-admin
     * push/pull
@@ -17,4 +16,11 @@
 次の時間、学生が全員来るとは限らない。
 
 ## DONE
+
+* インストールスクリプト
+* singleton チェックは icome.rb のラッパー、つまり、icome.sh で実施。
+* icome.rb を終了させない。=> nohup で。
+* watch-ss => 別フォルダ、別プロジェクトで。
+
+
 

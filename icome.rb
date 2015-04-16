@@ -6,9 +6,10 @@ require 'drb'
 require 'socket'
 require 'date'
 
-DEBUG = true
 VERSION = "0.6.1"
 UPDATE  = "2015-04-13"
+
+DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
@@ -38,13 +39,6 @@ def uhour(time)
   return 0
 end
 
-def exists_icome?()
-  IO.popen("ps ax | grep [i]come") do |p|
-    lines = p.readlines
-    return !lines.empty?
-  end
-end
-
 class UI
   include Java
   include_package 'java.awt'
@@ -69,7 +63,7 @@ class UI
     end
     panel.add(button)
 
-    # only show quit button in development.
+    # quit button in development only.
     unless ENV['UCOME']
       button = JButton.new('Quit')
       button.add_action_listener do |e|
@@ -112,16 +106,13 @@ class Icome
     @ui = UI.new(self)
   end
 
-  # attend を打った時間をチェックする。
   def attend
     now = Time.now
     today, time, zone = now.to_s.split
     u_hour = WDAY[now.wday] + uhour(time).to_s
     term = this_term()
-    db = "#{@icome7}/#{term}-#{u_hour}"
+    db = "#{@icome7}/{term}-{u_hour}"
 
-    # FIXME, a2015 special.
-    # コマンド引数にスイッチを取るようにするか？
     unless DEBUG
       unless u_hour =~ /(wed1)|(wed2)/
         @ui.dialog("授業時間じゃありません。")
@@ -129,24 +120,23 @@ class Icome
       end
     end
 
-    # first time?
-    unless File.exists?(db)
-      return unless @ui.query?("#{u_hour} を受講しますか？")
-    end
-
-    if already_checked?(db, today)
-      @ui.dialog("出席記録は一回の授業にひとつで十分。")
-      return
+    records = @ucome.find(@sid, u_hour, term)
+    debug "records: #{records}, #{@sid}, #{u_hour}, #{term}"
+    if records
+      if records.include?(today)
+        @ui.dialog("出席記録は一回の授業にひとつで十分。")
+        return
+      end
+      @ucome.update(@sid, today, u_hour, term)
+      @ui.dialog("出席を記録しました。<br>"+
+                 "学生番号:#{@sid}<br>"+
+                 "端末番号:#{@ip.split(/\./)[3]}")
     else
-      @ucome.insert(@sid, u_hour, term) unless @ucome.find(@sid, u_hour, term)
+      if @ui.query?("#{u_hour} を受講しますか？")
+        @ucome.insert(@sid, u_hour, term)
+        memo(db, today)
+      end
     end
-
-    @ucome.update(@sid, today, u_hour, term)
-    log(db, today)
-    @record = nil
-    @ui.dialog("出席を記録しました。<br>"+
-               "学生番号:#{@sid}<br>"+
-               "端末番号:#{@ip.split(/\./)[3]}")
   end
 
   def this_term()
@@ -158,8 +148,8 @@ class Icome
     "#{t}#{now.year}"
   end
 
-  # 答えを @record にキャッシュする。
   def show
+    #FIXME
     uhours = find_uhours()
     return if uhours.empty?
     if uhours.count == 1
@@ -167,9 +157,13 @@ class Icome
     else
       raise "not implemented: if he takes two or more classes."
     end
-    debug "#{__method__}: #{@sid} #{uhour}"
-    @record = @ucome.find(@sid, uhour, this_term()) if @record.nil?
-    @ui.dialog(@record.sort.join('<br>'))
+
+    record = @ucome.find(@sid, uhour, this_term())
+    if record
+      @ui.dialog(record.sort.join('<br>'))
+    else
+      @ui.dialog("記録がありません。")
+    end
   end
 
   def quit
@@ -186,8 +180,8 @@ class Icome
     not File.exist?(File.join(@icome7,uhour))
   end
 
-  def already_checked?(db, today)
-    debug "db: #{db}, today: #{today}"
+  def checked?(db, today)
+    debug "#{__method__} db: #{db}, today: #{today}"
     return false unless File.exists?(db)
     r = %r{#{today}}
     File.foreach(db) do |line|
@@ -197,7 +191,7 @@ class Icome
     false
   end
 
-  def log(db,today)
+  def memo(db,today)
     File.open(db,"a") do |fp|
       fp.puts today
     end
@@ -211,10 +205,6 @@ end
 #
 # main starts here
 #
-if exists_icome?()
-  debug "another icome process exists."
-  return
-end
 DRb.start_service
 ucome = DRbObject.new(nil, UCOME_URI)
 icome = Icome.new(ucome)
