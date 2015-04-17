@@ -3,7 +3,7 @@
 # use swing. so jruby.
 
 VERSION = "0.8.3"
-UPDATE  = "2015-04-16"
+UPDATE  = "2015-04-17"
 
 require 'drb'
 require 'socket'

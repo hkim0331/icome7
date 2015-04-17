@@ -4,11 +4,10 @@
 
 require 'drb'
 
-DEBUG = true
-
 VERSION = "0.8.3"
-UPDATE  = "2015-04-16"
+UPDATE  = "2015-04-17"
 
+DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 
 def debug(s)
