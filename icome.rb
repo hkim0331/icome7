@@ -2,8 +2,8 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.8.3"
-UPDATE  = "2015-04-17"
+VERSION = "0.9"
+UPDATE  = "2015-04-22"
 
 require 'drb'
 require 'socket'
@@ -69,7 +69,7 @@ class UI
     panel.add(button)
 
     # quit button in development only.
-    unless ENV['UCOME']
+    unless $debug
       button = JButton.new('Quit')
       button.add_action_listener do |e|
         @icome.quit
@@ -261,6 +261,9 @@ while (arg = ARGV.shift)
   case arg
   when /--debug/
     $debug = true
+  when /--version/
+    puts VERSION
+    exit
   else
     raise "unknown option: #{arg}"
   end

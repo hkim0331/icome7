@@ -4,14 +4,11 @@
 
 require 'drb'
 
-VERSION = "0.8.3"
-UPDATE  = "2015-04-17"
-
-DEBUG = (ENV['DEBUG'] || false)
-UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
+VERSION = "0.9"
+UPDATE  = "2015-04-22"
 
 def debug(s)
-  STDERR.puts "debug: " + s if DEBUG
+  STDERR.puts "debug: " + s if $debug
 end
 
 def usage
@@ -32,8 +29,24 @@ end
 #
 # main starts here
 #
+$debug = (ENV['DEBUG'] || false)
+ucome_uri = 'druby://150.69.90.80:9007'
+while (arg = ARGV.shift)
+  case arg
+  when /--debug/
+    $debug = true
+  when /--uri/
+    ucome_url = ARGV.shift
+  when /--version/
+    puts VERSION
+    exit
+  end
+end
+
+debug "ucome_uri: #{ucome_uri}"
+
 DRb.start_service
-ucome = DRbObject.new(nil, UCOME_URI)
+ucome = DRbObject.new(nil, ucome_uri)
 Thread.new do
   puts "type 'quit' to quit"
    while (print "> "; cmd = STDIN.gets)
