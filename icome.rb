@@ -2,7 +2,7 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.9"
+VERSION = "0.9.1"
 UPDATE  = "2015-04-22"
 
 require 'drb'
@@ -69,7 +69,7 @@ class UI
     panel.add(button)
 
     # quit button in development only.
-    unless $debug
+    if $debug
       button = JButton.new('Quit')
       button.add_action_listener do |e|
         @icome.quit

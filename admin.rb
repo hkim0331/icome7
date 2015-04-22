@@ -4,7 +4,7 @@
 
 require 'drb'
 
-VERSION = "0.9"
+VERSION = "0.9.1"
 UPDATE  = "2015-04-22"
 
 def debug(s)
@@ -21,7 +21,7 @@ usage:
 
   list
   delete n
-  - (re)start
+  - reset
   quit
 EOF
 end
@@ -63,8 +63,8 @@ Thread.new do
       ucome.push(cmd)
     when /exec/
       ucome.push(cmd)
-    when /(re)?start/
-      ucome.refresh
+    when /reset/
+      ucome.reset
     when /quit/
       exit(0)
     else
