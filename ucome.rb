@@ -14,7 +14,6 @@ gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-DEBUG = (ENV['DEBUG'] || false)
 UPLOAD = if File.directory?("/srv/icome7/upload")
     "/srv/icome7/upload"
   else
@@ -26,7 +25,7 @@ PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
 
 def debug(s)
-  STDERR.puts "debug: "+s if DEBUG
+  STDERR.puts "debug: #{s}" if $debug
 end
 
 class Ucome
@@ -143,6 +142,15 @@ end
 #
 # main starts here.
 #
+$debug = (ENV['DEBUG'] || false)
+while (arg = ARGV.shift)
+  case arg
+  when /--debug/
+    $debug = true
+  else
+    raise "unknown option: #{arg}"
+  end
+end
 
 if __FILE__==$0
   ucome = Ucome.new

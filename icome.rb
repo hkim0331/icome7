@@ -9,7 +9,6 @@ require 'drb'
 require 'socket'
 require 'date'
 
-DEBUG = (ENV['DEBUG'] || false)
 UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
@@ -21,7 +20,7 @@ WDAY = %w{sun mon tue wed thr fri sat}
 POLLING_INTERVAL = 5
 
 def debug(s)
-  STDERR.puts "debug: " + s if DEBUG
+  STDERR.puts "debug: " + s if $debug
 end
 
 def uid2sid(uid)
@@ -57,7 +56,7 @@ class UI
     end
     panel.add(button)
 
-    button = JButton.new('記録')
+    button = JButton.new('過去記録')
     button.add_action_listener do |e|
       @icome.show
     end
@@ -129,7 +128,7 @@ class Icome
     term = this_term()
     db = "#{@icome7}/#{term}-#{u_hour}"
 
-    unless DEBUG
+    unless $debug
       unless u_hour =~ /(wed1)|(wed2)/
         self.dialog("授業時間じゃありません。")
         return
@@ -257,13 +256,21 @@ end
 #
 # main starts here
 #
+$debug = (ENV['DEBUG'] || false)
+while (arg = ARGV.shift)
+  case arg
+  when /--debug/
+    $debug = true
+  else
+    raise "unknown option: #{arg}"
+  end
+end
+
 DRb.start_service
 ucome = DRbObject.new(nil, UCOME_URI)
 icome = Icome.new(ucome)
+debug ucome.echo("hello, ucome.")
 icome.setup_ui
-
-#debug ucome.echo("hello, ucome.")
-#debug icome.echo("hello, ucome via icome.")
 
 ## polling admin commands.
 next_cmd = 0
