@@ -21,7 +21,7 @@ usage:
 
   list
   delete n
-  - (re)start
+  - reset
   quit
 EOF
 end
@@ -63,8 +63,8 @@ Thread.new do
       ucome.push(cmd)
     when /exec/
       ucome.push(cmd)
-    when /(re)?start/
-      ucome.refresh
+    when /reset/
+      ucome.reset
     when /quit/
       exit(0)
     else

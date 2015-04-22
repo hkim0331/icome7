@@ -69,7 +69,7 @@ class UI
     panel.add(button)
 
     # quit button in development only.
-    unless $debug
+    if $debug
       button = JButton.new('Quit')
       button.add_action_listener do |e|
         @icome.quit
