@@ -17,13 +17,14 @@ end
 def usage
   print <<EOF
 usage:
-  delete n
   display message
-  download remote
-  exec command
-  list
-  (re)start
   upload local
+  - download remote as
+  - exec command
+
+  list
+  delete n
+  - (re)start
   quit
 EOF
 end
@@ -31,10 +32,8 @@ end
 #
 # main starts here
 #
-
 DRb.start_service
 ucome = DRbObject.new(nil, UCOME_URI)
-
 Thread.new do
   puts "type 'quit' to quit"
    while (print "> "; cmd = STDIN.gets)
@@ -47,7 +46,7 @@ Thread.new do
       ucome.delete($1.to_i)
     when /upload\s+.+/
       ucome.push(cmd)
-    when /download\s+.+/
+    when /download\s+(\S+)\s+(\S+)/
       ucome.push(cmd)
     when /exec/
       ucome.push(cmd)

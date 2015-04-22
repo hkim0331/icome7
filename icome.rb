@@ -190,6 +190,7 @@ class Icome
     java.lang.System.exit(0) unless ENV['UCOME']
   end
 
+  # FIXME: query to db?
   def find_uhours
     Dir.entries(@icome7).
       find_all{|x| x =~ /^[ab]/}.
@@ -225,6 +226,11 @@ class Icome
     @ucome.echo(s)
   end
 
+  # FIXME: isc to isc? or ucome to isc?
+  def download(remote)
+    debug "#{__method__} #{remote}"
+  end
+
   def upload(local)
     it = File.join(ENV['HOME'], local)
     if File.exists?(it)
@@ -240,10 +246,6 @@ class Icome
     @ui.dialog(msg.join("<p>"))
   rescue
     puts "msg: #{msg}"
-  end
-
-  def download(remote)
-    debug "#{__method__} #{remote}"
   end
 
   # jruby では無理。
@@ -263,7 +265,7 @@ icome.setup_ui
 #debug ucome.echo("hello, ucome.")
 #debug icome.echo("hello, ucome via icome.")
 
-# polling admin commands.
+## polling admin commands.
 next_cmd = 0
 Thread.new do
   while true do

@@ -121,6 +121,7 @@ class Commands
     @commands.push(cmd)
   end
 
+  # if out of range, returns nil.
   def get(n)
     @commands[n]
   end
