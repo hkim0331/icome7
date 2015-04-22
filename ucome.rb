@@ -8,13 +8,12 @@
 # }
 
 VERSION = "0.8.3"
-UPDATE  = "2015-04-16"
+UPDATE  = "2015-04-17"
 
 gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
 
-DEBUG = (ENV['DEBUG'] || false)
 UPLOAD = if File.directory?("/srv/icome7/upload")
     "/srv/icome7/upload"
   else
@@ -26,7 +25,7 @@ PORT = (ENV['MONGO_PORT'] || '27017')
 DB   = (ENV['UCOME_DB'] || 'ucome')
 
 def debug(s)
-  STDERR.puts "debug: "+s if DEBUG
+  STDERR.puts "debug: #{s}" if $debug
 end
 
 class Ucome
@@ -121,6 +120,7 @@ class Commands
     @commands.push(cmd)
   end
 
+  # if out of range, returns nil. it's OK.
   def get(n)
     @commands[n]
   end
@@ -142,6 +142,15 @@ end
 #
 # main starts here.
 #
+$debug = (ENV['DEBUG'] || false)
+while (arg = ARGV.shift)
+  case arg
+  when /--debug/
+    $debug = true
+  else
+    raise "unknown option: #{arg}"
+  end
+end
 
 if __FILE__==$0
   ucome = Ucome.new
