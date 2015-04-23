@@ -4,8 +4,8 @@
 
 require 'drb'
 
-VERSION = "0.9.1"
-UPDATE  = "2015-04-22"
+VERSION = "0.9.2"
+UPDATE  = "2015-04-23"
 
 def debug(s)
   STDERR.puts "debug: " + s if $debug
@@ -15,13 +15,15 @@ def usage
   print <<EOF
 usage:
   display message
+
   upload local
   - download remote as
   - exec command
 
   list
   delete n
-  - reset
+  reset
+
   quit
 EOF
 end
