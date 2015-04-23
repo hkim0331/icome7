@@ -1,10 +1,10 @@
 #!/bin/sh
 
-VERSION="0.9.1"
+VERSION="0.9.2"
 
 # debug
 #ICOME=./icome.rb
-ICOME=/home/t/hkimura/bin/icome.rb
+ICOME=/home/t/hkimura/bin/icome7.rb
 SS=/edu/bin/watch-ss
 
 if [ "$1" = "--version" ]; then
@@ -13,7 +13,7 @@ if [ "$1" = "--version" ]; then
 fi
 
 # singleton check
-ps ax | egrep '[i]come.rb' >/dev/null
+ps ax | egrep '[i]come7.rb' >/dev/null
 if [ "$?" -eq 0 ]; then
     echo "icome はすでに起動しています。"
     exit
