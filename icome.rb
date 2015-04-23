@@ -2,8 +2,8 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.9.1"
-UPDATE  = "2015-04-22"
+VERSION = "0.9.2"
+UPDATE  = "2015-04-23"
 
 require 'drb'
 require 'socket'
@@ -257,6 +257,7 @@ end
 # main starts here
 #
 $debug = (ENV['DEBUG'] || false)
+ucome_uri = UCOME_URI
 while (arg = ARGV.shift)
   case arg
   when /--debug/
@@ -264,13 +265,17 @@ while (arg = ARGV.shift)
   when /--version/
     puts VERSION
     exit
+  when /--uri/
+    ucome_uri = ARGV.shift
   else
     raise "unknown option: #{arg}"
   end
 end
 
+debug "ucome_uri: #{ucome_uri}"
+
 DRb.start_service
-ucome = DRbObject.new(nil, UCOME_URI)
+ucome = DRbObject.new(nil, ucome_uri)
 icome = Icome.new(ucome)
 debug ucome.echo("hello, ucome.")
 icome.setup_ui
