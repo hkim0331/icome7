@@ -20,6 +20,7 @@ clean:
 	${RM} *~ .#* *.bak nohup.out
 
 sync-isc:
+
 	rsync --exclude=upload --exclude=.git --exclude=*.bak \
 		-av . hkimura@remote-t.isc.kyutech.ac.jp:icome7/
 
