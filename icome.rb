@@ -2,7 +2,7 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.11"
+VERSION = "0.11.1"
 UPDATE  = "2015-05-11"
 
 require 'date'
@@ -272,7 +272,7 @@ while (arg = ARGV.shift)
   when /--version/
     puts VERSION
     exit
-  when /--uri/
+  when /--(uri)|(ucome)/
     ucome_uri = ARGV.shift
   else
     raise "unknown option: #{arg}"

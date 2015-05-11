@@ -7,7 +7,7 @@
 # atttends: [ '2014-04-12' ]
 # }
 
-VERSION = "0.11"
+VERSION = "0.11.1"
 UPDATE  = "2015-05-11"
 
 gem "mongo","1.12.1"
@@ -20,6 +20,15 @@ UPLOAD = if File.directory?("/srv/icome7/upload")
   else
     "./upload"
   end
+
+def usage()
+  print <<EOF
+usage: #{$0} [--mongodb host:port:db]
+             [--uri druby://address:port]
+             [--version]
+             [--usage]
+EOF
+end
 
 def debug(s)
   STDERR.puts "debug: #{s}" if $debug
@@ -138,13 +147,14 @@ end
 #
 # main starts here.
 #
+$debug  = (ENV['DEBUG'] || false)
 
-uri  = "druby://#{IPSocket::getaddress(Socket::gethostname)}:9007"
+uri  = (ENV['UCOME'] ||
+        "druby://#{IPSocket::getaddress(Socket::gethostname)}:9007")
 host = (ENV['MONGO_HOST'] || '127.0.0.1')
 port = (ENV['MONGO_PORT'] || '27017')
 db   = (ENV['UCOME_DB'] || 'ucome')
 
-$debug  = (ENV['DEBUG'] || false)
 while (arg = ARGV.shift)
   case arg
   when /--mongodb/
@@ -156,13 +166,17 @@ while (arg = ARGV.shift)
     exit(0)
   when /--debug/
     $debug = true
+  when /--(usage)|(help)/
+    usage()
+    exit
   else
     raise "unknown option: #{arg}"
+    usage()
   end
 end
 
 if __FILE__==$0
   DRb.start_service(uri, Ucome.new(host,port,db))
-  debug DRb.uri
+  puts DRb.uri
   DRb.thread.join
 end
