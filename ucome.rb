@@ -29,9 +29,10 @@ def debug(s)
 end
 
 class Ucome
-
-  def initialize
-    @conn = Mongo::Connection.new(HOST, PORT)
+  def initialize(mongodb)
+    host,port = mongodb.split(/:/)
+    debug "mongodb host:#{host}, port:#{port}"
+    @conn = Mongo::Connection.new(host, port)
     @db   = @conn[DB]
     @commands = Commands.new
   end
@@ -141,8 +142,15 @@ end
 # main starts here.
 #
 $debug = (ENV['DEBUG'] || false)
+ucome_uri = UCOME_URI
+mongodb = "#{HOST}:#{PORT}"
+
 while (arg = ARGV.shift)
   case arg
+  when /--mongo/
+    mongodb = ARGV.shift
+  when /--uri/
+    ucome_uri = ARGV.shift
   when /--version/
     puts VERSION
     exit(0)
@@ -154,8 +162,8 @@ while (arg = ARGV.shift)
 end
 
 if __FILE__==$0
-  ucome = Ucome.new
-  DRb.start_service(UCOME_URI, ucome)
+  ucome = Ucome.new(mongodb)
+  DRb.start_service(ucome_uri, ucome)
   debug DRb.uri
   DRb.thread.join
 end
