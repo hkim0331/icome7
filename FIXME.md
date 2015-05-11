@@ -1,5 +1,11 @@
-## FIXME
+# FIXME
 
+## 2015-05-11, 0.10
+
+* ucome は自分のアドレスをつかえばいいじゃないか？
+* ucome に --uri オプション
+
+# 
 * mongodb: セーフモードを導入するか？
 
 * find_uhours
