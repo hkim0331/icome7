@@ -4,8 +4,8 @@
 
 require 'drb'
 
-VERSION = "0.9.2"
-UPDATE  = "2015-04-23"
+VERSION = "0.10"
+UPDATE  = "2015-05-11"
 
 def debug(s)
   STDERR.puts "debug: " + s if $debug
@@ -68,6 +68,7 @@ Thread.new do
     when /reset/
       ucome.reset
     when /quit/
+      ucome.reset
       exit(0)
     else
       usage()
