@@ -7,33 +7,28 @@
 # atttends: [ '2014-04-12' ]
 # }
 
-VERSION = "0.10"
+VERSION = "0.11"
 UPDATE  = "2015-05-11"
 
 gem "mongo","1.12.1"
 require 'mongo'
 require 'drb'
+require 'socket'
 
 UPLOAD = if File.directory?("/srv/icome7/upload")
     "/srv/icome7/upload"
   else
     "./upload"
   end
-UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
-HOST = (ENV['MONGO_HOST'] || '127.0.0.1')
-PORT = (ENV['MONGO_PORT'] || '27017')
-DB   = (ENV['UCOME_DB'] || 'ucome')
 
 def debug(s)
   STDERR.puts "debug: #{s}" if $debug
 end
 
 class Ucome
-  def initialize(mongodb)
-    host,port = mongodb.split(/:/)
-    debug "mongodb host:#{host}, port:#{port}"
+  def initialize(host, port, db)
     @conn = Mongo::Connection.new(host, port)
-    @db   = @conn[DB]
+    @db   = @conn[db]
     @commands = Commands.new
   end
 
@@ -86,13 +81,14 @@ class Ucome
   end
 
   def upload(sid, name, contents)
+    debug "#{__method__} #{sid} #{name}"
     dir = File.join(UPLOAD,sid)
     Dir.mkdir(dir) unless File.directory?(dir)
     to = File.join(dir,Time.now.strftime("%F_#{name}"))
-    debug "#{__method__} #{sid} #{name} to: #{to}"
     File.open(to, "w") do |f|
       f.puts contents
     end
+    debug "#{__method__} to: #{to}"
   end
 
   def status(sid)
@@ -142,16 +138,19 @@ end
 #
 # main starts here.
 #
-$debug = (ENV['DEBUG'] || false)
-ucome_uri = UCOME_URI
-mongodb = "#{HOST}:#{PORT}"
 
+uri  = "druby://#{IPSocket::getaddress(Socket::gethostname)}:9007"
+host = (ENV['MONGO_HOST'] || '127.0.0.1')
+port = (ENV['MONGO_PORT'] || '27017')
+db   = (ENV['UCOME_DB'] || 'ucome')
+
+$debug  = (ENV['DEBUG'] || false)
 while (arg = ARGV.shift)
   case arg
-  when /--mongo/
-    mongodb = ARGV.shift
+  when /--mongodb/
+    host,port,db = ARGV.shift.split(/:/)
   when /--uri/
-    ucome_uri = ARGV.shift
+    uri = ARGV.shift
   when /--version/
     puts VERSION
     exit(0)
@@ -163,8 +162,7 @@ while (arg = ARGV.shift)
 end
 
 if __FILE__==$0
-  ucome = Ucome.new(mongodb)
-  DRb.start_service(ucome_uri, ucome)
+  DRb.start_service(uri, Ucome.new(host,port,db))
   debug DRb.uri
   DRb.thread.join
 end

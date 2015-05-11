@@ -2,14 +2,13 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.10"
+VERSION = "0.11"
 UPDATE  = "2015-05-11"
 
+require 'date'
 require 'drb'
 require 'socket'
-require 'date'
 
-UCOME_URI = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 PREFIX = {'j' => '10',
           'k' => '11',
           'm' => '12',
@@ -18,6 +17,7 @@ PREFIX = {'j' => '10',
           'p' => '15'}
 WDAY = %w{sun mon tue wed thr fri sat}
 POLLING_INTERVAL = 5
+MAX_UPLOAD_SIZE  = 5000000
 
 def debug(s)
   STDERR.puts "debug: " + s if $debug
@@ -46,7 +46,8 @@ class UI
   def initialize(icome)
     @icome = icome
     frame = JFrame.new('icome7')
-    frame.set_default_close_operation(JFrame::DO_NOTHING_ON_CLOSE)
+    frame.set_default_close_operation(
+      JFrame::DO_NOTHING_ON_CLOSE)
     panel = JPanel.new
     panel.set_layout(BoxLayout.new(panel, BoxLayout::Y_AXIS))
 
@@ -62,7 +63,7 @@ class UI
     end
     panel.add(button)
 
-    button = JButton.new('提出物')
+    button = JButton.new('奪取物')
     button.add_action_listener do |e|
       @icome.status
     end
@@ -83,24 +84,21 @@ class UI
   end
 
   def dialog(s)
-    JOptionPane.showMessageDialog(
-      nil, "<html>#{s}</html>", 'icome', JOptionPane::INFORMATION_MESSAGE)
+    JOptionPane.showMessageDialog(nil, "<html>#{s}</html>", "icome",
+                                  JOptionPane::INFORMATION_MESSAGE)
   end
 
   def query?(s)
-    ans = JOptionPane.showConfirmDialog(
-      nil, "<html>#{s}</html>", 'icome', JOptionPane::YES_NO_OPTION)
+    ans = JOptionPane.showConfirmDialog(nil, "<html>#{s}</html>", "icome",
+                                        JOptionPane::YES_NO_OPTION)
     ans == JOptionPane::YES_OPTION
   end
 
   def option_dialog(ss, query)
-    ans = JOptionPane.showOptionDialog(
-      nil,"<html>#{query}</html>","icome",
-      JOptionPane::YES_NO_OPTION,
-      JOptionPane::QUESTION_MESSAGE,
-      nil,
-      ss,
-      ss[0])
+    ans = JOptionPane.showOptionDialog(nil,"<html>#{query}</html>", "icome",
+                                       JOptionPane::YES_NO_OPTION,
+                                       JOptionPane::QUESTION_MESSAGE,
+                                       nil, ss, ss[0])
   end
 end
 
@@ -136,7 +134,7 @@ class Icome
     end
 
     records = @ucome.find(@sid, u_hour, term)
-    debug "records: #{records}, #{@sid}, #{u_hour}, #{term}"
+    debug "records:#{records},#{@sid},#{u_hour},#{term}"
     if records
       if records.include?(today)
         @ui.dialog("出席記録は一回の授業にひとつで十分。")
@@ -173,7 +171,8 @@ class Icome
     if uhours.count == 1
       uhour = uhours[0]
     else
-      ret = @ui.option_dialog(uhours,"複数のクラスを受講しているようです。")
+      ret = @ui.option_dialog(uhours,
+        "複数のクラスを受講しているようです。")
       return if ret < 0
       uhour = uhours[ret]
     end
@@ -231,9 +230,15 @@ class Icome
   end
 
   def upload(local)
+    debug "upload #{local}"
     it = File.join(ENV['HOME'], local)
     if File.exists?(it)
-      @ucome.upload(@sid, File.basename(local), File.open(it).read)
+      if File.size(it) < MAX_UPLOAD_SIZE
+        @ucome.upload(@sid,
+                      File.basename(local), File.open(it).read)
+      else
+        @ui.dialog("too big: #{it}: #{File.size(it)}")
+      end
     else
       # FIXME 日本語メッセージだと表示されない。
       @ui.dialog("did not find #{it}.")
@@ -242,9 +247,11 @@ class Icome
 
   def status()
     msg = @ucome.status(@sid)
-    @ui.dialog(msg.join("<p>"))
-  rescue
-    puts "msg: #{msg}"
+    if msg.empty?
+      @ui.dialog("まだありません。")
+    else
+      @ui.dialog(msg.sort.join("<p>"))
+    end
   end
 
   # jruby では無理。
@@ -257,7 +264,7 @@ end
 # main starts here
 #
 $debug = (ENV['DEBUG'] || false)
-ucome_uri = UCOME_URI
+ucome_uri = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 while (arg = ARGV.shift)
   case arg
   when /--debug/
