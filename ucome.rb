@@ -163,6 +163,6 @@ end
 
 if __FILE__==$0
   DRb.start_service(uri, Ucome.new(host,port,db))
-  debug DRb.uri
+  puts DRb.uri
   DRb.thread.join
 end
