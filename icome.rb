@@ -272,7 +272,7 @@ while (arg = ARGV.shift)
   when /--version/
     puts VERSION
     exit
-  when /--uri/
+  when /--(uri)|(ucome)/
     ucome_uri = ARGV.shift
   else
     raise "unknown option: #{arg}"

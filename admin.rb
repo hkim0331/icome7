@@ -14,23 +14,22 @@ end
 def usage
   print <<EOF
 usage:
-  display message
-
-  upload local (base user's HOME)
-  (download remote as, not yet)
-  (exec command, not yet. impossible.)
-
-  list
   delete n
-  reset
-
+  display message
+  - download remote as (not yet)
+  - exec command  (not yet. impossible, jruby?)
+  list
   quit
+  reset
+  upload local (base dir is user's HOME)
+  version
 EOF
 end
 
 #
 # main starts here
 #
+
 $debug = (ENV['DEBUG'] || false)
 uri = 'druby://150.69.90.80:9007'
 while (arg = ARGV.shift)
@@ -40,7 +39,7 @@ while (arg = ARGV.shift)
     exit(0)
   when /--debug/
     $debug = true
-  when /--uri/
+  when /--(uri)|(ucome)/
     uri = ARGV.shift
   when /--version/
     puts VERSION
@@ -53,7 +52,7 @@ DRb.start_service
 ucome = DRbObject.new(nil, uri)
 Thread.new do
   puts "type 'quit' to quit"
-   while (print "> "; cmd = STDIN.gets)
+  while (print "> "; cmd = STDIN.gets)
     case cmd
     when /list/
       puts ucome.list
@@ -67,6 +66,8 @@ Thread.new do
       ucome.push(cmd)
     when /exec/
       ucome.push(cmd)
+    when /version/
+      puts VERSION
     when /reset/
       ucome.reset
     when /quit/
@@ -75,6 +76,8 @@ Thread.new do
     else
       usage()
     end
-  end
+   end
+   ucome.reset
+   exit(0)
 end
 DRb.thread.join
