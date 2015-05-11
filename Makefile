@@ -18,6 +18,7 @@ ucome:
 
 clean:
 	${RM} *~ .#* *.bak nohup.out
+	${RM} -r upload/*
 
 sync-isc:
 
