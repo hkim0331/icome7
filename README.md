@@ -1,7 +1,8 @@
 # icome7
 
 icome version 7.
-rewrite icome6 with backend mongodb.
+
+rewrote icome6 from scratch with backend mongodb.
 
 ## require
 
@@ -10,25 +11,49 @@ gem install mongo -v 1.12.1
 gem install bson_ext
 ````
 
-## usage
+## develop
 
-mongodb:
-
-````
-mongo$ ./start-mongodh.sh
-````
-
-server:
+prep mongodb:
 
 ````
-orange$ UCOME='druby://150.69.90.80:9007' ./ucome.rb
+localhost$ ./start-mongo.sh
 ````
 
-client:
+launch ucome:
 
 ````
-isc$ UCOME='druby://150.69.90.80:9007' ./icome.rb
+localhost$ ./ucome.rb --uri druby://127.0.0.1:9007
 ````
+
+then icome.
+
+````
+localhost$  ./icome.rb --uri druby://127.0.0.1:9007
+````
+
+## production
+
+### orange
+
+````
+# service mongodb start
+# service ucome start
+````
+
+ucome は hkim 権限で起動する。
+
+### isc
+
+````
+isc$ /edu/bin/icome
+````
+
+### isc admin
+
+````
+hkimura$ ~/icome7/admin.rb
+````
+
 
 ## author
 

@@ -68,6 +68,7 @@ Thread.new do
     when /reset/
       ucome.reset
     when /quit/
+      ucome.reset
       exit(0)
     else
       usage()

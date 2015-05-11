@@ -143,6 +143,9 @@ end
 $debug = (ENV['DEBUG'] || false)
 while (arg = ARGV.shift)
   case arg
+  when /--version/
+    puts VERSION
+    exit(0)
   when /--debug/
     $debug = true
   else
