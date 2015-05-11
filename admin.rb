@@ -32,7 +32,7 @@ end
 # main starts here
 #
 $debug = (ENV['DEBUG'] || false)
-ucome_uri = 'druby://150.69.90.80:9007'
+uri = 'druby://150.69.90.80:9007'
 while (arg = ARGV.shift)
   case arg
   when /--help/
@@ -41,16 +41,16 @@ while (arg = ARGV.shift)
   when /--debug/
     $debug = true
   when /--uri/
-    ucome_url = ARGV.shift
+    uri = ARGV.shift
   when /--version/
     puts VERSION
     exit
   end
 end
-debug "ucome_uri: #{ucome_uri}"
+debug "uri: #{uri}"
 
 DRb.start_service
-ucome = DRbObject.new(nil, ucome_uri)
+ucome = DRbObject.new(nil, uri)
 Thread.new do
   puts "type 'quit' to quit"
    while (print "> "; cmd = STDIN.gets)

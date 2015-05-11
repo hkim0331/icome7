@@ -1,3 +1,4 @@
-upload/
+upload/*
+!upload/.place-holder
 nohup.out
 
