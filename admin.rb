@@ -16,9 +16,9 @@ def usage
 usage:
   display message
 
-  upload local
-  - download remote as
-  - exec command
+  upload local (base user's HOME)
+  (download remote as, not yet)
+  (exec command, not yet. impossible.)
 
   list
   delete n
@@ -35,6 +35,9 @@ $debug = (ENV['DEBUG'] || false)
 ucome_uri = 'druby://150.69.90.80:9007'
 while (arg = ARGV.shift)
   case arg
+  when /--help/
+    usage()
+    exit(0)
   when /--debug/
     $debug = true
   when /--uri/
@@ -44,7 +47,6 @@ while (arg = ARGV.shift)
     exit
   end
 end
-
 debug "ucome_uri: #{ucome_uri}"
 
 DRb.start_service

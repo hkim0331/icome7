@@ -89,6 +89,7 @@ class Ucome
     dir = File.join(UPLOAD,sid)
     Dir.mkdir(dir) unless File.directory?(dir)
     to = File.join(dir,Time.now.strftime("%F_#{name}"))
+    debug "#{__method__} #{sid} #{name} to: #{to}"
     File.open(to, "w") do |f|
       f.puts contents
     end

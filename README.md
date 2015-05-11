@@ -40,7 +40,7 @@ localhost$  ./icome.rb --uri druby://127.0.0.1:9007
 # service ucome start
 ````
 
-ucome は hkim 権限で起動する。
+ucome runs under hkim privilege.
 
 ### isc
 
@@ -53,6 +53,11 @@ isc$ /edu/bin/icome
 ````
 hkimura$ ~/icome7/admin.rb
 ````
+
+* display message
+* upload dir/file ...
+  upload local:~/dir/file as remote:/srv/icome7/upload/uid/file
+  `dir/` is omitted.
 
 
 ## author
