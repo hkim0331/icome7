@@ -21,7 +21,6 @@ clean:
 	${RM} -r upload/*
 
 sync-isc:
-
 	rsync --exclude=upload --exclude=.git --exclude=*.bak \
 		-av . hkimura@remote-t.isc.kyutech.ac.jp:icome7/
 

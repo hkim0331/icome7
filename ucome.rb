@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 # jgem install bson_ext errored. so ruby.
 #
 # format {
@@ -7,7 +8,7 @@
 # atttends: [ '2014-04-12' ]
 # }
 
-VERSION = "0.11.2"
+VERSION = "0.12"
 UPDATE  = "2015-05-13"
 
 gem "mongo","1.12.1"
@@ -37,10 +38,13 @@ def debug(s)
 end
 
 class Ucome
+  attr_reader :reset_count
+
   def initialize(host, port, db)
     @conn = Mongo::Connection.new(host, port)
     @db   = @conn[db]
     @commands = Commands.new
+    @reset_count = 0
   end
 
   def insert(sid, uhour, term)
@@ -113,7 +117,11 @@ class Ucome
     end
   end
 
+  # BUG! icome can not know ucome has reset.
+  # commands スタックとは別にリセットフラグをもたせるか？
+  # icome のメニューにリセットを入れるか？
   def reset
+    @reset_count += 1
     @commands = Commands.new
   end
 
@@ -152,7 +160,6 @@ end
 # main starts here.
 #
 $debug  = (ENV['DEBUG'] || false)
-
 uri  = (ENV['UCOME'] ||
         "druby://#{IPSocket::getaddress(Socket::gethostname)}:9007")
 host = (ENV['MONGO_HOST'] || '127.0.0.1')

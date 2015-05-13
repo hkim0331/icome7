@@ -2,7 +2,7 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.11.2"
+VERSION = "0.12"
 UPDATE  = "2015-05-13"
 
 require 'date'
@@ -226,7 +226,7 @@ class Icome
   end
 
   # FIXME: isc to isc? or ucome to isc?
-  def download(remote)
+  def download(remote, local)
     debug "#{__method__} #{remote}"
   end
 
@@ -290,26 +290,33 @@ icome.setup_ui
 debug "polloing..."
 Thread.new do
   next_cmd = 0
+  reset = 0
   while true do
+    ucome_reset = @ucome.reset_count
+    if ucome_reset > reset
+      next_cmd = 0
+      reset = ucome_reset
+    end
     cmd = @ucome.fetch(next_cmd)
-    debug "fetch #{cmd}"
+    debug "fetch:#{cmd}, reset: #{reset}, next_cmd: #{next_cmd}"
     if cmd.nil?
       sleep INTERVAL
       next
     end
     case cmd
-    when /^display (.*)$/
+    when /^display\s+(.+)$/
       icome.dialog($1)
     when /^upload\s+(\S+)/
       icome.upload($1)
-    when /^download\s+(\S+)/
-      icome.download($1)
+    when /^download\s+(\S+)\s+(\S+)$/
+      icome.download($1,$2)
     when /^exec/
       icome.exec(cmd)
-    when /^reset/
-      next_cmd = 0
+    # BUG!
+    when /reset (\d+)/
+      next_cmd = $1.to_i
     else
-      puts "error: #{cmd}"
+      debug "error: #{cmd}"
     end
     next_cmd += 1
   end
