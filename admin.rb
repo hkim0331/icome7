@@ -14,15 +14,15 @@ end
 def usage
   print <<EOF
 usage:
+  [display|message]  message
+  [upload|get] local (base dir is user's HOME)
+  list
   delete n
-  display message
+  reset
+  version
+  quit
   - download remote as (not yet)
   - exec command  (not yet. impossible, jruby?)
-  list
-  quit
-  reset
-  upload local (base dir is user's HOME)
-  version
 EOF
 end
 
@@ -52,15 +52,15 @@ DRb.start_service
 ucome = DRbObject.new(nil, uri)
 Thread.new do
   puts "type 'quit' to quit"
-  while (print "> "; cmd = STDIN.gets)
+  while (print "> "; cmd = STDIN.gets.strip)
     case cmd
     when /list/
       puts ucome.list
-    when /display/
+    when /(display)|(message)/
       ucome.push(cmd)
     when /delete\s+(\d+)/
       ucome.delete($1.to_i)
-    when /upload\s+.+/
+    when /(upload)|(get)\s+.+/
       ucome.push(cmd)
     when /download\s+(\S+)\s+(\S+)/
       ucome.push(cmd)

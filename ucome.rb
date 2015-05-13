@@ -15,11 +15,13 @@ require 'mongo'
 require 'drb'
 require 'socket'
 
-UPLOAD = if File.directory?("/srv/icome7/upload")
-    "/srv/icome7/upload"
-  else
-    "./upload"
-  end
+if File.directory?("/srv/icome7/upload")
+  UPLOAD = "/srv/icome7/upload"
+  LOG    = "/srv/icome7/log/ucome.log"
+else
+  UPLOAD = "./upload"
+  LOG    = "./log/ucome.log"
+end
 
 def usage()
   print <<EOF
@@ -74,6 +76,7 @@ class Ucome
 
   # admin interface
   def push(cmd)
+    debug "push #{cmd}"
     @commands.push(cmd)
   end
 
@@ -86,6 +89,7 @@ class Ucome
   end
 
   def fetch(n)
+    debug "fetch #{n}"
     @commands.get(n)
   end
 
@@ -159,7 +163,7 @@ while (arg = ARGV.shift)
   case arg
   when /--mongodb/
     host,port,db = ARGV.shift.split(/:/)
-  when /--uri/
+  when /--(uri)|(ucome)/
     uri = ARGV.shift
   when /--version/
     puts VERSION
@@ -176,7 +180,9 @@ while (arg = ARGV.shift)
 end
 
 if __FILE__==$0
+#  $log = Logger.new(LOG, 5, 10*1024)
   DRb.start_service(uri, Ucome.new(host,port,db))
-  puts DRb.uri
+  debug DRb.uri
+  debug "mongodb:#{host}:#{port}:#{db}"
   DRb.thread.join
 end
