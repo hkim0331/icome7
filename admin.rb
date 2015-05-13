@@ -4,7 +4,7 @@
 
 require 'drb'
 
-VERSION = "0.11.2"
+VERSION = "0.11.2.1"
 UPDATE  = "2015-05-13"
 
 def debug(s)
@@ -50,27 +50,28 @@ debug "uri: #{uri}"
 
 DRb.start_service
 ucome = DRbObject.new(nil, uri)
+
 Thread.new do
   puts "type 'quit' to quit"
-  while (print "> "; cmd = STDIN.gets.strip)
+  while (print "> "; cmd = STDIN.gets)
     case cmd
     when /list/
       puts ucome.list
-    when /(display)|(message)/
+    when /^display/
       ucome.push(cmd)
     when /delete\s+(\d+)/
       ucome.delete($1.to_i)
-    when /(upload)|(get)\s+.+/
+    when /^upload/
       ucome.push(cmd)
-    when /download\s+(\S+)\s+(\S+)/
+    when /^download/
       ucome.push(cmd)
-    when /exec/
+    when /^exec/
       ucome.push(cmd)
-    when /version/
+    when /^version/
       puts VERSION
-    when /reset/
+    when /^reset/
       ucome.reset
-    when /quit/
+    when /^quit/
       ucome.reset
       exit(0)
     else
