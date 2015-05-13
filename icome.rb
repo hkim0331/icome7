@@ -2,8 +2,8 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.11.1"
-UPDATE  = "2015-05-11"
+VERSION = "0.11.2"
+UPDATE  = "2015-05-13"
 
 require 'date'
 require 'drb'

@@ -4,8 +4,8 @@
 
 require 'drb'
 
-VERSION = "0.11.1"
-UPDATE  = "2015-05-11"
+VERSION = "0.11.2"
+UPDATE  = "2015-05-13"
 
 def debug(s)
   STDERR.puts "debug: " + s if $debug
