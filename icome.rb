@@ -2,8 +2,8 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.11.1"
-UPDATE  = "2015-05-11"
+VERSION = "0.11.2"
+UPDATE  = "2015-05-13"
 
 require 'date'
 require 'drb'
@@ -16,8 +16,10 @@ PREFIX = {'j' => '10',
           'o' => '14',
           'p' => '15'}
 WDAY = %w{sun mon tue wed thr fri sat}
-POLLING_INTERVAL = 5
+INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
+
+$debug = false
 
 def debug(s)
   STDERR.puts "debug: " + s if $debug
@@ -77,7 +79,6 @@ class UI
       end
       panel.add(button)
     end
-
     frame.add(panel)
     frame.pack
     frame.set_visible(true)
@@ -234,8 +235,7 @@ class Icome
     it = File.join(ENV['HOME'], local)
     if File.exists?(it)
       if File.size(it) < MAX_UPLOAD_SIZE
-        @ucome.upload(@sid,
-                      File.basename(local), File.open(it).read)
+        @ucome.upload(@sid, File.basename(local), File.open(it).read)
       else
         @ui.dialog("too big: #{it}: #{File.size(it)}")
       end
@@ -258,13 +258,14 @@ class Icome
   def exec(command)
     puts "無理。"
   end
+
 end
 
 #
 # main starts here
 #
 $debug = (ENV['DEBUG'] || false)
-ucome_uri = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
+ucome = (ENV['UCOME'] || 'druby://127.0.0.1:9007')
 while (arg = ARGV.shift)
   case arg
   when /--debug/
@@ -273,30 +274,29 @@ while (arg = ARGV.shift)
     puts VERSION
     exit
   when /--(uri)|(ucome)/
-    ucome_uri = ARGV.shift
+    ucome = ARGV.shift
   else
     raise "unknown option: #{arg}"
   end
 end
 
-debug "ucome_uri: #{ucome_uri}"
+debug "ucome: #{ucome}"
 
 DRb.start_service
-ucome = DRbObject.new(nil, ucome_uri)
-icome = Icome.new(ucome)
-debug ucome.echo("hello, ucome.")
+@ucome = DRbObject.new(nil, ucome)
+icome = Icome.new(@ucome)
 icome.setup_ui
 
-## polling admin commands.
-next_cmd = 0
+debug "polloing..."
 Thread.new do
+  next_cmd = 0
   while true do
-    cmd = ucome.fetch(next_cmd)
+    cmd = @ucome.fetch(next_cmd)
+    debug "fetch #{cmd}"
     if cmd.nil?
-      sleep POLLING_INTERVAL
+      sleep INTERVAL
       next
     end
-    debug "cmd: #{cmd}"
     case cmd
     when /^display (.*)$/
       icome.dialog($1)
