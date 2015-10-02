@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="0.12"
+VERSION="0.20"
 
 # debug
 #ICOME=./icome.rb
