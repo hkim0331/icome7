@@ -2,33 +2,26 @@
 # coding: utf-8
 # use swing. so jruby.
 
-VERSION = "0.12"
-UPDATE  = "2015-05-13"
-
+$debug = false
 require 'date'
 require 'drb'
 require 'socket'
 
-PREFIX = {'j' => '10',
-          'k' => '11',
-          'm' => '12',
-          'n' => '13',
-          'o' => '14',
-          'p' => '15'}
+VERSION = "0.12"
+UPDATE  = "2015-05-13"
 WDAY = %w{sun mon tue wed thr fri sat}
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
 
-$debug = false
-
-def debug(s)
-  STDERR.puts "debug: " + s if $debug
-end
-
+PREFIX = {'j'=>'10', 'k'=>'11', 'm'=>'12', 'n'=>'13', 'o'=>'14', 'p'=>'15'}
 def uid2sid(uid)
   PREFIX[uid[0]] + uid[1,6]
 rescue
   uid
+end
+
+def debug(s)
+  STDERR.puts "debug: " + s if $debug
 end
 
 def uhour(time)

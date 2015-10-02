@@ -1,4 +1,5 @@
 #!/bin/sh
+TERM=b2015
 
-mongoexport -d ucome -c a2015 -o /opt/icome7/csv/`date +%F`.csv
+mongoexport -d ucome -c ${TERM} -o /opt/icome7/csv/`date +%F`.csv
 
