@@ -1,0 +1,3 @@
+use ucome
+db.b2015.update({sid: "15109301"},{$set: {attends: ["2015-10-01"]}})
+db.b2015.update({attends: []},{$set: {attends: ["2015-10-06"]}},{multi:"true"})

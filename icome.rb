@@ -2,14 +2,16 @@
 # coding: utf-8
 # use swing. so jruby.
 
-$debug = false
+# main で初期化している。
+# $debug = false
+
 require 'date'
 require 'drb'
 require 'socket'
 
 VERSION = "0.20"
 UPDATE  = "2015-10-02"
-WDAY = %w{sun mon tue wed thr fri sat}
+WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
 
@@ -58,9 +60,17 @@ class UI
     end
     panel.add(button)
 
-    button = JButton.new('奪取物')
+    button = JButton.new('個人課題')
     button.add_action_listener do |e|
       @icome.status
+    end
+    panel.add(button)
+
+    #
+    # FIXME, 0.21 以降でやるべし。
+    button = JButton.new('グループ課題')
+    button.add_action_listener do |e|
+      dialog("授業資料の「グループ課題提出」から提出してください。")
     end
     panel.add(button)
 
@@ -106,7 +116,7 @@ class Icome
     @interval = 5
     @icome7 = File.expand_path("~/.icome7")
     @record = nil
-    Dir.mkdir(@icome7) unless Dir.exists?(@icome7)
+    Dir.mkdir(@icome7) unless Dir.exist?(@icome7)
   end
 
   def setup_ui
@@ -121,7 +131,7 @@ class Icome
     db = "#{@icome7}/#{term}-#{u_hour}"
 
     unless $debug
-      unless u_hour =~ /(wed1)|(wed2)/
+      unless u_hour =~ /(tue2)|(tue4)|(thr1)|(thr4)/
         self.dialog("授業時間じゃありません。")
         return
       end
