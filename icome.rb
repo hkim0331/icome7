@@ -1,16 +1,17 @@
 #!/usr/bin/env jruby
 # coding: utf-8
 # use swing. so jruby.
-
 # main で初期化している。
 # $debug = false
+#
+# BUG: 年が変わっても年度は一緒。2016-01-07
 
 require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "0.21"
-UPDATE  = "2015-10-14"
+VERSION = "bug_this_year"
+UPDATE  = "2016-01-07"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
@@ -48,19 +49,19 @@ class UI
     panel = JPanel.new
     panel.set_layout(BoxLayout.new(panel, BoxLayout::Y_AXIS))
 
-    button = JButton.new('出席')
+    button = JButton.new('出席を記録する')
     button.add_action_listener do |e|
       @icome.attend
     end
     panel.add(button)
 
-    button = JButton.new('過去記録')
+    button = JButton.new('過去記録を見る')
     button.add_action_listener do |e|
       @icome.show
     end
     panel.add(button)
 
-    button = JButton.new('個人課題')
+    button = JButton.new('個人課題を見る')
     button.add_action_listener do |e|
       @icome.status
     end
@@ -68,7 +69,7 @@ class UI
 
     #
     # FIXME, 0.21 以降でやるべし。
-    button = JButton.new('グループ課題')
+    button = JButton.new('グループ課題は、')
     button.add_action_listener do |e|
       dialog("授業資料の「グループ課題提出」から提出してください。")
     end
@@ -156,13 +157,18 @@ class Icome
     end
   end
 
+  # BUG: 2016-01-07
   def this_term()
-    now = Time.now
+    now = Time.now()
     t = "b"
     if (4 <= now.month and now.month < 10)
       t = "a"
     end
-    "#{t}#{now.year}"
+    year = now.year()
+    if (now.month < 4)
+      year -= 1
+    end
+    "#{t}#{year}"
   end
 
   def show
