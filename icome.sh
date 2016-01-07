@@ -1,6 +1,9 @@
 #!/bin/sh
 
-VERSION="0.21"
+VERSION="bug_this_year"
+
+# BUG: 2016-01-07, in release 0.21.
+[ -f ${HOME}/.icome7/b2014-thr1 ] && rm ${HOME}/.icome7/b2014-thr1
 
 # debug
 #ICOME=./icome.rb
