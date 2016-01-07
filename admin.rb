@@ -4,7 +4,7 @@
 
 require 'drb'
 
-VERSION = "bug_this_year"
+VERSION = "0.30"
 UPDATE  = "2016-01-07"
 
 def debug(s)
