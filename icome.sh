@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="bug_this_year"
+VERSION="0.30"
 
 # BUG: 2016-01-07, in release 0.21.
 [ -f ${HOME}/.icome7/b2014-thr1 ] && rm ${HOME}/.icome7/b2014-thr1
