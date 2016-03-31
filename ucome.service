@@ -13,7 +13,6 @@
 
 USER="hkim"
 CMD="/opt/icome7/bin/ucome.rb"
-
 export UCOME='druby://150.69.90.80:9007'
 
 usage() {
@@ -32,5 +31,3 @@ case "$1" in
         usage
         ;;
 esac
-
-:

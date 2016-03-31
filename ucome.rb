@@ -186,7 +186,7 @@ while (arg = ARGV.shift)
   end
 end
 
-if __FILE__==$0
+if __FILE__ == $0
 #  $log = Logger.new(LOG, 5, 10*1024)
   DRb.start_service(uri, Ucome.new(host,port,db))
   debug DRb.uri

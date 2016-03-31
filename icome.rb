@@ -16,7 +16,9 @@ WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
 
-PREFIX = {'j'=>'10', 'k'=>'11', 'm'=>'12', 'n'=>'13', 'o'=>'14', 'p'=>'15'}
+PREFIX = {'j' => '10', 'k' => '11', 'm' => '12', 'n' => '13',
+          'o' => '14', 'p' => '15', 'q' => '16' }
+
 def uid2sid(uid)
   PREFIX[uid[0]] + uid[1,6]
 rescue
@@ -44,8 +46,7 @@ class UI
   def initialize(icome)
     @icome = icome
     frame = JFrame.new('icome7')
-    frame.set_default_close_operation(
-      JFrame::DO_NOTHING_ON_CLOSE)
+    frame.set_default_close_operation(JFrame::DO_NOTHING_ON_CLOSE)
     panel = JPanel.new
     panel.set_layout(BoxLayout.new(panel, BoxLayout::Y_AXIS))
 
@@ -157,7 +158,7 @@ class Icome
     end
   end
 
-  # BUG: 2016-01-07
+  # FIXED: 2016-01-07
   def this_term()
     now = Time.now()
     t = "b"
@@ -201,8 +202,7 @@ class Icome
   # FIXME: query to db?
   def find_uhours
     Dir.entries(@icome7).
-      find_all{|x| x =~ /^[ab]/}.
-      collect{|x| x.split(/-/)[1]}
+      find_all{|x| x =~ /^[ab]/}.collect{|x| x.split(/-/)[1]}
   end
 
   def first_time?(u_hour)
