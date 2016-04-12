@@ -9,13 +9,14 @@ require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "0.21"
-UPDATE  = "2015-10-14"
+VERSION = "1.0"
+UPDATE  = "2016-04-12"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
 
-PREFIX = {'j'=>'10', 'k'=>'11', 'm'=>'12', 'n'=>'13', 'o'=>'14', 'p'=>'15'}
+PREFIX = {'j'=>'10', 'k'=>'11', 'm'=>'12', 'n'=>'13', 'o'=>'14',
+          'p'=>'15', 'q'=>'16'}
 def uid2sid(uid)
   PREFIX[uid[0]] + uid[1,6]
 rescue
@@ -60,19 +61,19 @@ class UI
     end
     panel.add(button)
 
-    button = JButton.new('個人課題')
-    button.add_action_listener do |e|
-      @icome.status
-    end
-    panel.add(button)
-
-    #
-    # FIXME, 0.21 以降でやるべし。
-    button = JButton.new('グループ課題')
-    button.add_action_listener do |e|
-      dialog("授業資料の「グループ課題提出」から提出してください。")
-    end
-    panel.add(button)
+    # 2016-04-12, off.
+    # button = JButton.new('個人課題')
+    # button.add_action_listener do |e|
+    #   @icome.status
+    # end
+    # panel.add(button)
+    # #
+    # # FIXME, 0.21 以降でやるべし。
+    # button = JButton.new('グループ課題')
+    # button.add_action_listener do |e|
+    #   dialog("授業資料の「グループ課題提出」から提出してください。")
+    # end
+    # panel.add(button)
 
     # quit button in development only.
     if $debug
@@ -131,7 +132,10 @@ class Icome
     db = "#{@icome7}/#{term}-#{u_hour}"
 
     unless $debug
-      unless u_hour =~ /(tue2)|(tue4)|(thr1)|(thr4)/
+      # 後期
+      # unless u_hour =~ /(tue2)|(tue4)|(thr1)|(thr4)/
+      # 前期
+      unless u_hour =~ /(wed1)|(wed2)/
         self.dialog("授業時間じゃありません。")
         return
       end
