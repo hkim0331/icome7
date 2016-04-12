@@ -1,9 +1,10 @@
 #!/usr/bin/env jruby
 # coding: utf-8
 # use swing. so jruby.
-
 # main で初期化している。
 # $debug = false
+#
+# BUG: 年が変わっても年度は一緒。2016-01-07
 
 require 'date'
 require 'drb'
@@ -15,8 +16,9 @@ WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
 
-PREFIX = {'j'=>'10', 'k'=>'11', 'm'=>'12', 'n'=>'13', 'o'=>'14',
-          'p'=>'15', 'q'=>'16'}
+PREFIX = {'j' => '10', 'k' => '11', 'm' => '12', 'n' => '13',
+          'o' => '14', 'p' => '15', 'q' => '16' }
+
 def uid2sid(uid)
   PREFIX[uid[0]] + uid[1,6]
 rescue
@@ -44,18 +46,17 @@ class UI
   def initialize(icome)
     @icome = icome
     frame = JFrame.new('icome7')
-    frame.set_default_close_operation(
-      JFrame::DO_NOTHING_ON_CLOSE)
+    frame.set_default_close_operation(JFrame::DO_NOTHING_ON_CLOSE)
     panel = JPanel.new
     panel.set_layout(BoxLayout.new(panel, BoxLayout::Y_AXIS))
 
-    button = JButton.new('出席')
+    button = JButton.new('出席を記録する')
     button.add_action_listener do |e|
       @icome.attend
     end
     panel.add(button)
 
-    button = JButton.new('過去記録')
+    button = JButton.new('過去記録を見る')
     button.add_action_listener do |e|
       @icome.show
     end
@@ -160,13 +161,18 @@ class Icome
     end
   end
 
+  # FIXED: 2016-01-07
   def this_term()
-    now = Time.now
+    now = Time.now()
     t = "b"
     if (4 <= now.month and now.month < 10)
       t = "a"
     end
-    "#{t}#{now.year}"
+    year = now.year()
+    if (now.month < 4)
+      year -= 1
+    end
+    "#{t}#{year}"
   end
 
   def show
@@ -199,8 +205,7 @@ class Icome
   # FIXME: query to db?
   def find_uhours
     Dir.entries(@icome7).
-      find_all{|x| x =~ /^[ab]/}.
-      collect{|x| x.split(/-/)[1]}
+      find_all{|x| x =~ /^[ab]/}.collect{|x| x.split(/-/)[1]}
   end
 
   def first_time?(u_hour)
