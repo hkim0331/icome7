@@ -8,13 +8,8 @@
 # atttends: [ '2014-04-12' ]
 # }
 
-<<<<<<< HEAD
 VERSION = "1.0"
 UPDATE  = "2016-04-12"
-=======
-VERSION = "0.30"
-UPDATE  = "2016-01-07"
->>>>>>> 156f3dcb54e4c1923b7aa4c6f326b31afdb4df22
 
 gem "mongo","1.12.1"
 require 'mongo'

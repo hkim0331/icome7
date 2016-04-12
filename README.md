@@ -28,8 +28,10 @@ localhost$ ./ucome.rb --uri druby://127.0.0.1:9007
 then icome.
 
 ```sh
-localhost$  ./icome.rb --uri druby://127.0.0.1:9007
+localhost$  ./icome.rb --ucome druby://127.0.0.1:9007
 ```
+
+--debug option is also available.
 
 ## production
 
