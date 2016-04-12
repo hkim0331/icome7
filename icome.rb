@@ -9,7 +9,7 @@ require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "0.21"
+VERSION = "1.0"
 UPDATE  = "2016-04-12"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
