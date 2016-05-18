@@ -10,8 +10,8 @@ require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "0.30"
-UPDATE  = "2016-01-07"
+VERSION = "1.0.1"
+UPDATE  = "2016-05-18"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
@@ -62,19 +62,19 @@ class UI
     end
     panel.add(button)
 
-    button = JButton.new('個人課題を見る')
-    button.add_action_listener do |e|
-      @icome.status
-    end
-    panel.add(button)
-
-    #
-    # FIXME, 0.21 以降でやるべし。
-    button = JButton.new('グループ課題は、')
-    button.add_action_listener do |e|
-      dialog("授業資料の「グループ課題提出」から提出してください。")
-    end
-    panel.add(button)
+    # 2016-04-12, off.
+    # button = JButton.new('個人課題')
+    # button.add_action_listener do |e|
+    #   @icome.status
+    # end
+    # panel.add(button)
+    # #
+    # # FIXME, 0.21 以降でやるべし。
+    # button = JButton.new('グループ課題')
+    # button.add_action_listener do |e|
+    #   dialog("授業資料の「グループ課題提出」から提出してください。")
+    # end
+    # panel.add(button)
 
     # quit button in development only.
     if $debug
@@ -133,7 +133,10 @@ class Icome
     db = "#{@icome7}/#{term}-#{u_hour}"
 
     unless $debug
-      unless u_hour =~ /(tue2)|(tue4)|(thr1)|(thr4)/
+      # 後期
+      # unless u_hour =~ /(tue2)|(tue4)|(thr1)|(thr4)/
+      # 前期
+      unless u_hour =~ /(wed1)|(wed2)/
         self.dialog("授業時間じゃありません。")
         return
       end
@@ -226,6 +229,10 @@ class Icome
     end
   end
 
+  def cowsay(s)
+    system("xcowsay --at=400,400 #{s}")
+  end
+
   def dialog(s)
     @ui.dialog(s)
   end
@@ -313,6 +320,8 @@ Thread.new do
       next
     end
     case cmd
+    when /^x*cowsay\s+(.+)$/
+      icome.cowsay($1)
     when /^display\s+(.+)$/
       icome.dialog($1)
     when /^upload\s+(\S+)/
