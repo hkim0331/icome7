@@ -2,9 +2,6 @@
 
 VERSION="1.0.1"
 
-# BUG: 2016-01-07, in release 0.21.
-[ -f ${HOME}/.icome7/b2014-thr1 ] && rm ${HOME}/.icome7/b2014-thr1
-
 # debug
 #ICOME=./icome.rb
 ICOME=/home/t/hkimura/bin/icome7.rb
