@@ -4,8 +4,8 @@
 
 require 'drb'
 
-VERSION = "0.30"
-UPDATE  = "2016-01-07"
+VERSION = "1.0"
+UPDATE  = "2016-04-12"
 
 def debug(s)
   STDERR.puts "debug: " + s if $debug
@@ -57,6 +57,8 @@ Thread.new do
     case cmd
     when /list/
       puts ucome.list
+    when /^x*cowsay/
+      ucome.push(cmd)
     when /^display/
       ucome.push(cmd)
     when /delete\s+(\d+)/
