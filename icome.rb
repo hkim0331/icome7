@@ -10,8 +10,8 @@ require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "1.0"
-UPDATE  = "2016-04-12"
+VERSION = "1.0.1"
+UPDATE  = "2016-05-18"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
