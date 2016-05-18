@@ -232,7 +232,7 @@ class Icome
   def cowsay(s)
     system("xcowsay --at=400,400 #{s}")
   end
-    
+
   def dialog(s)
     @ui.dialog(s)
   end
