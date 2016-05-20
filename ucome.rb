@@ -8,8 +8,8 @@
 # atttends: [ '2014-04-12' ]
 # }
 
-VERSION = "1.0.1"
-UPDATE  = "2016-05-18"
+VERSION = "1.1"
+UPDATE  = "2016-05-20"
 
 gem "mongo","1.12.1"
 require 'mongo'

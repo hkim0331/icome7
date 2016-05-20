@@ -10,8 +10,8 @@ require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "1.0.1"
-UPDATE  = "2016-05-18"
+VERSION = "1.1"
+UPDATE  = "2016-05-20"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
@@ -62,6 +62,12 @@ class UI
     end
     panel.add(button)
 
+    # 2016-05-20, gtypist
+    button = JButton.new('5/18 gtypist')
+    button.add_action_listener do |e|
+      @icome.gtypist('May 18')
+    end
+    panel.add(button)
     # 2016-04-12, off.
     # button = JButton.new('個人課題')
     # button.add_action_listener do |e|
@@ -123,6 +129,16 @@ class Icome
 
   def setup_ui
     @ui = UI.new(self)
+  end
+
+  def gtypist(pat)
+    ret=[]
+    File.foreach("#{ENV['HOME']}/.gtypist") do |line|
+      if line =~ /#{pat}/
+        ret.push "#{line.chomp}<br>"
+      end
+    end
+    @ui.dialog(ret.join)
   end
 
   def attend
