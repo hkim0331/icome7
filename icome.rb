@@ -46,7 +46,8 @@ class UI
   def initialize(icome)
     @icome = icome
     frame = JFrame.new('icome7')
-    frame.set_default_close_operation(JFrame::DO_NOTHING_ON_CLOSE)
+    frame.set_undecorated(true)
+#    frame.set_default_close_operation(JFrame::DO_NOTHING_ON_CLOSE)
     panel = JPanel.new
     panel.set_layout(BoxLayout.new(panel, BoxLayout::Y_AXIS))
 
@@ -68,6 +69,14 @@ class UI
       @icome.gtypist('May 18')
     end
     panel.add(button)
+
+    # 2016-05-20, gtypist-all
+    button = JButton.new('gtypist all')
+    button.add_action_listener do |e|
+      @icome.gtypist_all()
+    end
+    panel.add(button)
+
     # 2016-04-12, off.
     # button = JButton.new('個人課題')
     # button.add_action_listener do |e|
@@ -139,6 +148,14 @@ class Icome
       end
     end
     @ui.dialog(ret.join)
+  end
+
+  def gtypist_all()
+    ret=[]
+    IO.popen("/home/t/hkimura/bin/gtypist-check.rb") do |p|
+      ret = p.readlines.map{|l| l.chomp}
+    end
+    @ui.dialog(ret.join('<br>'))
   end
 
   def attend
