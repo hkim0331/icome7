@@ -171,15 +171,17 @@ class Icome
 
   def gtypist_stage(s)
     ret=[]
+    len = {'Q1' => 8, 'Q2' =>  8, 'Q3' => 10, 'Q4' => 11, 'Q5' => 9}
     IO.popen("/home/t/hkimura/bin/gtypist-check.rb") do |p|
       ret = p.readlines.map{|l| l.chomp}.find_all{|l| l =~ /#{s}/}
     end
-    len = {'Q1' => 8, 'Q2' =>  8, 'Q3' => 10, 'Q4' => 11, 'Q5' => 9}
     greeting = ""
     if ret.length >= len[s]
-      greeting ="<br><p style='color:red;'>CLEARED!</p>"
+      greeting = "<p style='color:red;'>CLEAR!</p>"
+    elsif ret.length == 0
+      greeting = "<p style='color:blue;'>やっとかないと平常点つかない。</p>"
     end
-    @ui.dialog(ret.join('<br>')+greeting)
+    @ui.dialog(ret.join('<br>') + greeting)
   end
 
   def attend
