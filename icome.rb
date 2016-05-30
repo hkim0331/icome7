@@ -77,6 +77,7 @@ class UI
     end
     panel.add(button)
 
+    # 2016-05
     # 2016-04-12, off.
     # button = JButton.new('個人課題')
     # button.add_action_listener do |e|
