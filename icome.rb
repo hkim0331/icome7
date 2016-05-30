@@ -70,12 +70,22 @@ class UI
     end
     panel.add(button)
 
-    # 2016-05-20, gtypist-all
-    button = JButton.new('gtypist all')
-    button.add_action_listener do |e|
-      @icome.gtypist_all()
+    # 2016-05-20, gtypist all
+    # off by gtypist_stage, 2016-05-30
+    # button = JButton.new('gtypist all')
+    # button.add_action_listener do |e|
+    #   @icome.gtypist_all()
+    # end
+    # panel.add(button)
+
+    # 2016-05-20, gtypist-stage
+    %w{Q1 Q2 Q3 Q4 Q5}.each do |s|
+      button = JButton.new("gtypist #{s}")
+      button.add_action_listener do |e|
+        @icome.gtypist_stage(s)
+      end
+      panel.add(button)
     end
-    panel.add(button)
 
     # 2016-05
     # 2016-04-12, off.
@@ -157,6 +167,21 @@ class Icome
       ret = p.readlines.map{|l| l.chomp}
     end
     @ui.dialog(ret.join('<br>'))
+  end
+
+  def gtypist_stage(s)
+    ret=[]
+    len = {'Q1' => 8, 'Q2' =>  8, 'Q3' => 10, 'Q4' => 11, 'Q5' => 9}
+    IO.popen("/home/t/hkimura/bin/gtypist-check.rb") do |p|
+      ret = p.readlines.map{|l| l.chomp}.find_all{|l| l =~ /#{s}/}
+    end
+    greeting = ""
+    if ret.length >= len[s]
+      greeting = "<p style='color:red;'>CLEAR!</p>"
+    elsif ret.length == 0
+      greeting = "<p style='color:blue;'>やっとかないと平常点つかない。</p>"
+    end
+    @ui.dialog(ret.join('<br>') + greeting)
   end
 
   def attend
