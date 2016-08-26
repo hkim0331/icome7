@@ -10,8 +10,8 @@ require 'date'
 require 'drb'
 require 'socket'
 
-VERSION = "1.2.1"
-UPDATE  = "2016-05-30"
+VERSION = "1.2"
+UPDATE  = "2016-05-27"
 WDAY = %w{ sun mon tue wed thr fri sat }
 INTERVAL = 5
 MAX_UPLOAD_SIZE  = 5000000
@@ -177,7 +177,7 @@ class Icome
     end
     greeting = ""
     if ret.length >= len[s]
-      greeting = "<p style='color:red;'>CLEAR!</p>"
+      greeting = "<p style='color:red;'>CLEAR!!</p>"
     elsif ret.length == 0
       greeting = "<p style='color:blue;'>やっとかないと平常点つかない。</p>"
     end
