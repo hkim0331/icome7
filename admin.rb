@@ -70,7 +70,7 @@ Thread.new do
     when /^exec/
       ucome.push(cmd)
     when /^version/
-      puts VERSION
+       puts VERSION
     when /^reset/
       ucome.reset
     when /^quit/

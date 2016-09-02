@@ -87,6 +87,14 @@ class UI
       panel.add(button)
     end
 
+    # 2016-06-08
+    button = JButton.new("中間テスト") do |s|
+      button.add_action_listener do |e|
+        system("firefox http://literacy-2016.melt.kyutech.ac.jp/fcgi/abb2.cgi &")
+      end
+    end
+    panel.add(button)
+
     # 2016-05
     # 2016-04-12, off.
     # button = JButton.new('個人課題')
@@ -177,7 +185,7 @@ class Icome
     end
     greeting = ""
     if ret.length >= len[s]
-      greeting = "<p style='color:red;'>CLEAR!</p>"
+      greeting = "<p style='color:red;'>CLEAR!!</p>"
     elsif ret.length == 0
       greeting = "<p style='color:blue;'>やっとかないと平常点つかない。</p>"
     end
